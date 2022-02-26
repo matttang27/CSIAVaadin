@@ -1,0 +1,11 @@
+{
+  "compatibilityMode": false,
+  "productionMode": false,
+  "npmFolder": "C:\\Users\\mattt.DESKTOP-29BGI4H\\Downloads\\flow-crm-tutorial",
+  "generatedFolder": "C:\\Users\\mattt.DESKTOP-29BGI4H\\Downloads\\flow-crm-tutorial\\target\\frontend",
+  "frontendFolder": "C:\\Users\\mattt.DESKTOP-29BGI4H\\Downloads\\flow-crm-tutorial\\frontend",
+  "pnpm.enable": false,
+  "require.home.node": false,
+  "node.version": "v14.15.4",
+  "node.download.root": "https://nodejs.org/dist/"
+}
