@@ -1,22 +1,37 @@
 package com.example.application.views;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import com.example.application.views.code.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
-
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.textfield.*;
 @PWA(name = "Flow CRM Tutorial", shortName = "Flow CRM Tutorial", enableInstallPrompt = false)
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("list")
 @Route(value = "")
 public class ListView extends VerticalLayout {
-
+    private static User user;
+    private static Manager manager;
+    private static TaskManager taskManager;
+    private static GroupManager groupManager;
     public ListView() {
 
 
@@ -26,29 +41,122 @@ public class ListView extends VerticalLayout {
         // String name = input.nextLine();
         // System.out.println("Creating account...");
         String name = "Matthew";
-        User user = new User(name);
+        user = new User(name);
         // might change how this works...do i even need a manager?
         // I'll change it if it ever inconveniences me >:D
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getTasker();
-        GroupManager groupManager = manager.getGrouper();
+        manager = new Manager();
+        taskManager = manager.getTasker();
+        groupManager = manager.getGrouper();
         manager.setUser(user);
 
-        Button addButton = new Button("Add Task");
-        
 
+        Dialog addDialog = new Dialog();
+        Button addButton = new Button("Add Task",e -> addDialog.open());
         Grid<Task> grid = new Grid<>(Task.class,false);
-        grid.addColumn(Task::getName).setHeader("Name");
-        grid.addColumn(Task::getNextDue).setHeader("Due");
-        grid.addColumn(Task::getPriority).setHeader("Priority");
+
+        addDialog.add(addTaskLayout(addDialog,grid));
 
         grid.setItems(taskManager.getTasks());
-        addButton.addClickListener(click -> {
-            taskManager.blankTask();
+        grid.addComponentColumn(
+            
+        task -> {
+            Checkbox checkBox = new Checkbox();
+            checkBox.setValue(task.getDone());
+            checkBox.addValueChangeListener(event -> task.setDone(event.getValue())); // inside setA() method you need to set isB and isC to false if the new value is true. No good!
+            return checkBox;
+        });
+        grid.addColumn(Task::getName).setHeader("Name").setFrozen(true).setKey("name");
+        grid.addColumn(Task::getNextDueString).setHeader("Due").setKey("due");
+        grid.addColumn(Task::getPriority).setHeader("Priority").setKey("priority");
+        GridContextMenu<Task> menu = grid.addContextMenu();
+        menu.addItem("View", event -> {
+            Task selectedTask = event.getItem().get();
+            Dialog itemDialog = new Dialog();
+            itemDialog.add(viewItemLayout(itemDialog,selectedTask));
+        });
+        //TODO: figure out how to color GridContextMenu options
+        menu.addItem("Delete", event -> {
+            Task selectedTask = event.getItem().get();
+            taskManager.removeTask(selectedTask);
             grid.setItems(taskManager.getTasks());
         });
 
-        add(addButton,grid);
+
+        add(addDialog,addButton,grid);
+    }
+    //addTaskLayout - creates the Layout for the Add Task Dialog
+    private static VerticalLayout addTaskLayout(Dialog dialog,Grid grid) {
+        
+        H2 title = new H2("Add a new task");
+
+        TextField nameField = new TextField("Task Name");
+        nameField.setRequiredIndicatorVisible(true);
+        nameField.setErrorMessage("This field is required");
+        DateTimePicker dueField = new DateTimePicker("Due Time");
+        dueField.setRequiredIndicatorVisible(true);
+        dueField.setErrorMessage("This field is required");
+        dueField.setValue(LocalDateTime.now().withHour(23).withMinute(59));
+        NumberField priorityField = new NumberField("Priority (1-10)");
+        priorityField.setRequiredIndicatorVisible(true);
+        priorityField.setErrorMessage("This field is required");
+
+        VerticalLayout fieldLayout = new VerticalLayout(nameField,dueField,priorityField);
+
+        Button cancelButton = new Button("Cancel", e -> dialog.close());
+        Button saveButton = new Button("Add", e -> {
+            //checks whether any of the fields are empty, if true, sends a notification and cancels
+            String error = "";
+            if (nameField.getValue() == null || dueField.getValue() == null || priorityField.getValue() == null) {
+                error = "Fill in all required fields";
+            }
+            else if (priorityField.getValue().intValue() > 10 || priorityField.getValue().intValue() < 1) {
+                error = "Priority not in range";
+            }
+
+            if (!error.equals("")) {
+                Notification errorNotif = Notification.show(error);
+                errorNotif.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                errorNotif.setDuration(2000);
+                return;
+            }
+            
+            Task newTask = new Task(nameField.getValue(),dueField.getValue(), priorityField.getValue().intValue());
+            taskManager.addTask(newTask);
+            grid.setItems(taskManager.getTasks());
+
+            Notification addTaskNotif = Notification.show("Added your Task!");
+            addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            addTaskNotif.setDuration(2000);
+            dialog.close();
+            
+        });
+        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton,saveButton);
+        
+        VerticalLayout dialogLayout = new VerticalLayout(title,fieldLayout,buttonLayout);
+
+        
+        return dialogLayout;
     }
 
+    private static VerticalLayout viewItemLayout(Dialog dialog,Task task) {
+        TextField title = new TextField();
+        title.setValue(task.getName());
+        title.addThemeName("font-24px");
+
+        DateTimePicker dueField = new DateTimePicker("Due Time");
+        dueField.setRequiredIndicatorVisible(true);
+        dueField.setErrorMessage("This field is required");
+        dueField.setValue(task.getNextDue());
+        NumberField priorityField = new NumberField("Priority (1-10)");
+        priorityField.setRequiredIndicatorVisible(true);
+        priorityField.setErrorMessage("This field is required");
+        priorityField.setValue((double) task.getPriority());
+
+
+        
+        VerticalLayout dialogLayout = new VerticalLayout();
+        return dialogLayout;
+    }
 }
