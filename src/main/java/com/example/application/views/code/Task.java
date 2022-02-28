@@ -114,6 +114,10 @@ public class Task {
         return this.nextDue;
     }
 
+    public String getNextDueString() {
+        return this.nextDue.toString();
+    }
+
     public void setNextDue(LocalDateTime nextDue) {
         this.nextDue = nextDue;
     }

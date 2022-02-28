@@ -1,9 +1,9 @@
 {
   "compatibilityMode": false,
   "productionMode": false,
-  "npmFolder": "C:\\Users\\mattt.DESKTOP-29BGI4H\\Downloads\\flow-crm-tutorial",
-  "generatedFolder": "C:\\Users\\mattt.DESKTOP-29BGI4H\\Downloads\\flow-crm-tutorial\\target\\frontend",
-  "frontendFolder": "C:\\Users\\mattt.DESKTOP-29BGI4H\\Downloads\\flow-crm-tutorial\\frontend",
+  "npmFolder": "C:\\Users\\jjzh2\\Documents\\GitHub\\ComputerScienceSL\\CSIAVaadin",
+  "generatedFolder": "C:\\Users\\jjzh2\\Documents\\GitHub\\ComputerScienceSL\\CSIAVaadin\\target\\frontend",
+  "frontendFolder": "C:\\Users\\jjzh2\\Documents\\GitHub\\ComputerScienceSL\\CSIAVaadin\\frontend",
   "pnpm.enable": false,
   "require.home.node": false,
   "node.version": "v14.15.4",
