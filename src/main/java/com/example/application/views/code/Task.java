@@ -115,6 +115,9 @@ public class Task {
     }
 
     public String getNextDueString() {
+        if (this.nextDue == null) {
+            return "";
+        }
         return this.nextDue.toString();
     }
 
