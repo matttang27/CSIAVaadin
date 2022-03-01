@@ -66,11 +66,13 @@ public class ListView extends VerticalLayout {
             checkBox.setValue(task.getDone());
             checkBox.addValueChangeListener(event -> task.setDone(event.getValue())); 
             return checkBox;
-        });
-        grid.addColumn(Task::getName).setHeader("Name").setFrozen(true).setKey("name");
+        }).setFrozen(true).setKey("done");
+        
+        grid.addColumn(Task::getName).setHeader("Name").setKey("name");
         //TODO: Change getNextDue format (preferably without an entire new function)
         grid.addColumn(Task::getNextDue).setHeader("Due").setKey("due");
         grid.addColumn(Task::getPriority).setHeader("Priority").setKey("priority");
+        grid.setColumnReorderingAllowed(true);
         GridContextMenu<Task> menu = grid.addContextMenu();
         menu.addItem("View", event -> {
             Task selectedTask = event.getItem().get();
