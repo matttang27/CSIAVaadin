@@ -1,4 +1,5 @@
 package com.example.application.views;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -22,6 +23,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
+
+import org.vaadin.stefan.fullcalendar.Entry;
+import org.vaadin.stefan.fullcalendar.FullCalendar;
+import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
+
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.details.Details;
@@ -56,7 +62,10 @@ public class TaskView extends VerticalLayout {
         //import data
         Component c = UI.getCurrent();
         manager = (Manager) ComponentUtil.getData(c,"manager");
-
+        if (manager == null) {
+            manager = new Manager();
+            manager.setUser(new User("Matthew"));
+        }
 
         user = manager.getUser();
         taskManager = manager.getTasker();
@@ -104,6 +113,8 @@ public class TaskView extends VerticalLayout {
         });
 
 
+        
+        
         add(addButton,grid);
     }
     //addTaskLayout - creates the Layout for the Add Task Dialog
