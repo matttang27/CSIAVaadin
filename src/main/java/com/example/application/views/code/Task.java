@@ -34,14 +34,14 @@ public class Task {
     String background;
     String icon;
     Task parent;
-    String description;
+    String notes;
     int id;
     ArrayList<Task> children;
     //note that a group is just a task with a different string haha shhhhhhhh
     String type;
     //Why do i have 3 constructors? ... that's a good question.
 
-    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime nextDue, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String description, int id, ArrayList<Task> children, String type) {
+    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime nextDue, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String notes, int id, ArrayList<Task> children, String type) {
         this.name = name;
         this.created = created;
         this.lastEdited = lastEdited;
@@ -53,7 +53,7 @@ public class Task {
         this.background = background;
         this.icon = icon;
         this.parent = parent;
-        this.description = description;
+        this.notes = notes;
         this.id = id;
         this.children = children;
         this.type = type;
@@ -64,7 +64,7 @@ public class Task {
         color=null;
         background="";
         icon="";
-        description="";
+        notes="";
         created = LocalDateTime.now();
         lastEdited = LocalDateTime.now();
         done = false;
@@ -79,7 +79,7 @@ public class Task {
         color=null;
         background="";
         icon="";
-        description="";
+        notes="";
         created = LocalDateTime.now();
         lastEdited = LocalDateTime.now();
         done = false;
@@ -183,7 +183,7 @@ public class Task {
             ", background='" + getBackground() + "'" +
             ", icon='" + getIcon() + "'" +
             ", parent='" + getParent() + "'" +
-            ", description='" + getDescription() + "'" +
+            ", notes='" + getNotes() + "'" +
             ", id='" + getId() + "'" +
             "}";
     }
@@ -208,12 +208,12 @@ public class Task {
         this.parent = parent;
     }
 
-    public String getDescription() {
-        return this.description;
+    public String getNotes() {
+        return this.notes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public int getId() {
@@ -226,7 +226,7 @@ public class Task {
 
     public Task clone(){ 
         //thank god for vscode
-        return new Task(name, created, lastEdited, nextDue, cronJob, priority, done, color, background, icon, parent, description, id, children, type);
+        return new Task(name, created, lastEdited, nextDue, cronJob, priority, done, color, background, icon, parent, notes, id, children, type);
     }
 
 }
