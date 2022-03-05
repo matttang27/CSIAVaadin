@@ -112,6 +112,7 @@ public class TaskView extends VerticalLayout {
             Task selectedTask = event.getItem().get();
             taskManager.removeTask(selectedTask);
             grid.setItems(taskManager.getTasks());
+            calendar.removeEntry(selectedTask.getEntry());
         });
 
 
