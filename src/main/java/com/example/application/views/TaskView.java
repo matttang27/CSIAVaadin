@@ -40,10 +40,12 @@ import com.vaadin.flow.component.ComponentUtil;
 @PageTitle("tasks")
 @Route(value = "tasks")
 public class TaskView extends VerticalLayout {
-    private static User user;
-    private static Manager manager;
-    private static TaskManager taskManager;
-    private static GroupManager groupManager;
+    private User user;
+    private Manager manager;
+    private TaskManager taskManager;
+    private GroupManager groupManager;
+    private FullCalendar calendar;
+    private Grid<Task> grid;
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public TaskView() {
 
@@ -79,7 +81,7 @@ public class TaskView extends VerticalLayout {
         Dialog addDialog = new Dialog();
         add(addDialog);
         Button addButton = new Button("Add Task",e -> addDialog.open());
-        Grid<Task> grid = new Grid<>(Task.class,false);
+        grid = new Grid<>(Task.class,false);
 
         addDialog.add(addTaskLayout(addDialog,grid));
 
@@ -113,12 +115,16 @@ public class TaskView extends VerticalLayout {
         });
 
 
+        calendar = FullCalendarBuilder.create().build();
+        add(addButton,grid,calendar);
+        calendar.setHeight("500px");
+        calendar.setWidth("1000px");
+
         
         
-        add(addButton,grid);
     }
     //addTaskLayout - creates the Layout for the Add Task Dialog
-    private static VerticalLayout addTaskLayout(Dialog dialog,Grid grid) {
+    private VerticalLayout addTaskLayout(Dialog dialog,Grid grid) {
         
         H2 title = new H2("Add a new task");
 
@@ -158,6 +164,16 @@ public class TaskView extends VerticalLayout {
             taskManager.addTask(newTask);
             grid.setItems(taskManager.getTasks());
 
+            //calendar stuff
+            Entry entry = new Entry();
+            entry.setTitle(newTask.getName());
+            entry.setAllDay(true);
+            entry.setEnd(newTask.getNextDue());
+            entry.setStart(newTask.getNextDue());
+            
+            newTask.setEntry(entry);
+            calendar.addEntry(entry);
+
             Notification addTaskNotif = Notification.show("Added your Task!");
             addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             addTaskNotif.setDuration(2000);
@@ -174,7 +190,7 @@ public class TaskView extends VerticalLayout {
         return dialogLayout;
     }
 
-    private static VerticalLayout viewItemLayout(Dialog dialog,Grid grid,Task task) {
+    private VerticalLayout viewItemLayout(Dialog dialog,Grid grid,Task task) {
 
         TextField nameField = new TextField("Task Name");
         nameField.setValue(task.getName());
@@ -226,9 +242,20 @@ public class TaskView extends VerticalLayout {
             
             task.setName(nameField.getValue());
             task.setNextDue(dueField.getValue());
+            task.setStart(dueField.getValue().withHour(0).withMinute(0).withSecond(1));
             task.setPriority(priorityField.getValue().intValue());
             task.setLastEdited(LocalDateTime.now());
             task.setNotes(notesField.getValue());
+
+            Entry entry = task.getEntry();
+            calendar.removeEntry(entry);
+            entry.setTitle(task.getName());
+            entry.setAllDay(true);
+            entry.setStart(task.getNextDue());
+            entry.setEnd(task.getNextDue());
+            
+            calendar.addEntry(entry);
+            
             grid.setItems(taskManager.getTasks());
 
             Notification addTaskNotif = Notification.show("Task Updated!");
@@ -246,4 +273,5 @@ public class TaskView extends VerticalLayout {
         
         return dialogLayout;
     }
+    
 }
