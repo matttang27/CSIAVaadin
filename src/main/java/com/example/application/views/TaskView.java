@@ -2,6 +2,7 @@ package com.example.application.views;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import com.example.application.views.code.*;
@@ -13,11 +14,14 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -25,8 +29,10 @@ import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 
 import org.vaadin.stefan.fullcalendar.Entry;
+import org.vaadin.stefan.fullcalendar.EntryClickedEvent;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
+import org.vaadin.zhe.PaperRangeSlider;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
@@ -34,7 +40,9 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.ComponentUtil;
+
 @PWA(name = "Flow CRM Tutorial", shortName = "Flow CRM Tutorial", enableInstallPrompt = false)
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("tasks")
@@ -46,10 +54,13 @@ public class TaskView extends VerticalLayout {
     private GroupManager groupManager;
     private FullCalendar calendar;
     private Grid<Task> grid;
+    private String sortType = "alpha";
+    private boolean ascending = true;
+    private String[][] filter = { { "", "" }, { "", "" }, { "", "" }, { "", "" } };
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public TaskView() {
 
-
+        
         // Sign-in not implemented yet
         // System.out.println("Create an Account:");
         // System.out.println("Enter name:");
@@ -58,7 +69,13 @@ public class TaskView extends VerticalLayout {
         // might change how this works...do i even need a manager?
         // I'll change it if it ever inconveniences me >:D
 
-        
+        //TODO: ADD RANGE SLIDER
+        // PaperRangeSlider slider = new PaperRangeSlider(-100, 100, -50, 50);
+        // slider.setVisible(true);
+        // add(slider);
+
+        // PaperSlider slider2 = new PaperSlider();
+        // add(slider2);
 
 
         //import data
@@ -85,6 +102,36 @@ public class TaskView extends VerticalLayout {
 
         addDialog.add(addTaskLayout(addDialog,grid));
 
+        Select<String> selectSort = new Select<>();
+        RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
+
+
+        selectSort.setItems("Task Name","Priority","Due Date");
+        selectSort.setValue("Task Name");
+        selectSort.addValueChangeListener(e -> {
+            switch (e.getValue()) {
+                case "Task Name":
+                    sortType = "alpha";
+                case "Priority":
+                    sortType = "priority";
+                case "Due Date":
+                    sortType = "day";
+            }
+            updateGrid();
+        });
+
+        
+        radioGroup.setItems("Ascending","Descending");
+        radioGroup.setValue("Ascending");
+        radioGroup.addValueChangeListener(e -> {
+            ascending = e.getValue().equals("Ascending");
+            updateGrid();
+        });
+        add(new HorizontalLayout(addButton,selectSort,radioGroup));
+
+
+
+
         grid.setItems(taskManager.getTasks());
         grid.addComponentColumn(
             
@@ -100,9 +147,14 @@ public class TaskView extends VerticalLayout {
         grid.addColumn(Task::getNextDue).setHeader("Due").setKey("due");
         grid.addColumn(Task::getPriority).setHeader("Priority").setKey("priority");
         grid.setColumnReorderingAllowed(true);
+
+
+        add(grid);
         GridContextMenu<Task> menu = grid.addContextMenu();
         menu.addItem("View", event -> {
             Task selectedTask = event.getItem().get();
+            //we need to get the taskManager task, not the grid task
+            selectedTask = taskManager.getTask(selectedTask.getId());
             Dialog itemDialog = new Dialog();
             itemDialog.add(viewItemLayout(itemDialog,grid,selectedTask));
             itemDialog.open();
@@ -110,13 +162,16 @@ public class TaskView extends VerticalLayout {
         //TODO: figure out how to color GridContextMenu options
         menu.addItem("Delete", event -> {
             Task selectedTask = event.getItem().get();
+            
             taskManager.removeTask(selectedTask);
-            grid.setItems(taskManager.getTasks());
+            updateCalendar();
+            updateGrid();
+            
         });
 
 
         calendar = FullCalendarBuilder.create().build();
-        add(addButton,grid,calendar);
+        add(calendar);
         calendar.setHeight("500px");
         calendar.setWidth("1000px");
 
@@ -162,17 +217,10 @@ public class TaskView extends VerticalLayout {
             Task newTask = new Task(nameField.getValue(),dueField.getValue(), priorityField.getValue().intValue());
             newTask.setLastEdited(LocalDateTime.now());
             taskManager.addTask(newTask);
-            grid.setItems(taskManager.getTasks());
-
-            //calendar stuff
-            Entry entry = new Entry();
-            entry.setTitle(newTask.getName());
-            entry.setAllDay(true);
-            entry.setEnd(newTask.getNextDue());
-            entry.setStart(newTask.getNextDue());
             
-            newTask.setEntry(entry);
-            calendar.addEntry(entry);
+
+            updateGrid();
+            updateCalendar();
 
             Notification addTaskNotif = Notification.show("Added your Task!");
             addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -190,30 +238,29 @@ public class TaskView extends VerticalLayout {
         return dialogLayout;
     }
 
-    private VerticalLayout viewItemLayout(Dialog dialog,Grid grid,Task task) {
-
+    private VerticalLayout viewItemLayout(Dialog dialog,Grid grid,Task selectTask) {
         TextField nameField = new TextField("Task Name");
-        nameField.setValue(task.getName());
+        nameField.setValue(selectTask.getName());
         nameField.setRequiredIndicatorVisible(true);
         nameField.setErrorMessage("This field is required");
         DateTimePicker dueField = new DateTimePicker("Due Time");
-        dueField.setValue(task.getNextDue());
+        dueField.setValue(selectTask.getNextDue());
         dueField.setRequiredIndicatorVisible(true);
         dueField.setErrorMessage("This field is required");
         NumberField priorityField = new NumberField("Priority (1-10)");
-        priorityField.setValue((double) task.getPriority());
+        priorityField.setValue((double) selectTask.getPriority());
         priorityField.setRequiredIndicatorVisible(true);
         priorityField.setErrorMessage("This field is required");
         TextField createdField = new TextField("Date created");
         createdField.setReadOnly(true);
-        createdField.setValue(task.getCreated().format(defDTFormat));
+        createdField.setValue(selectTask.getCreated().format(defDTFormat));
         TextField editField = new TextField("Last edited");
-        editField.setValue(task.getLastEdited().format(defDTFormat));
+        editField.setValue(selectTask.getLastEdited().format(defDTFormat));
         editField.setReadOnly(true);
 
 
         TextArea notesField = new TextArea("Notes");
-        notesField.setValue(task.getNotes());
+        notesField.setValue(selectTask.getNotes());
 
         VerticalLayout additionalLayout = new VerticalLayout(new HorizontalLayout(createdField,editField),notesField);
 
@@ -223,6 +270,7 @@ public class TaskView extends VerticalLayout {
         VerticalLayout fieldLayout = new VerticalLayout(nameField,dueField,priorityField,additionalInfo);
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
+        selectTask.setName("TEST");
         Button saveButton = new Button("Save", e -> {
             //checks whether any of the fields are empty, if true, sends a notification and cancels
             String error = "";
@@ -240,23 +288,26 @@ public class TaskView extends VerticalLayout {
                 return;
             }
             
-            task.setName(nameField.getValue());
-            task.setNextDue(dueField.getValue());
-            task.setStart(dueField.getValue().withHour(0).withMinute(0).withSecond(1));
-            task.setPriority(priorityField.getValue().intValue());
-            task.setLastEdited(LocalDateTime.now());
-            task.setNotes(notesField.getValue());
+            selectTask.setName(nameField.getValue());
+            selectTask.setNextDue(dueField.getValue());
+            selectTask.setStart(dueField.getValue().withHour(0).withMinute(0).withSecond(1));
+            selectTask.setPriority(priorityField.getValue().intValue());
+            selectTask.setLastEdited(LocalDateTime.now());
+            selectTask.setNotes(notesField.getValue());
+            System.out.println(selectTask);
+            
+            
 
-            Entry entry = task.getEntry();
-            calendar.removeEntry(entry);
-            entry.setTitle(task.getName());
-            entry.setAllDay(true);
-            entry.setStart(task.getNextDue());
-            entry.setEnd(task.getNextDue());
+            updateCalendar();
+            updateGrid();
+            //TODO: ADD ENTRY CLICK LISTENERS TO CALENDAR
+            // ComponentEventListener<EntryClickedEvent> entryClick = new ComponentEventListener();
+            // entryClick.onComponentEvent(e -> {
+
+            // });
+            // calendar.addEntryClickedListener(entryClick);
             
-            calendar.addEntry(entry);
             
-            grid.setItems(taskManager.getTasks());
 
             Notification addTaskNotif = Notification.show("Task Updated!");
             addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -272,6 +323,28 @@ public class TaskView extends VerticalLayout {
 
         
         return dialogLayout;
+    }
+
+    //not "update", kinda just delete everything and rebuild from scratch. Hey, if it works, it works!
+    private void updateGrid() {
+        ArrayList<Task> tasks = taskManager.getTasks();
+        
+        tasks = TaskManager.taskSortFilter(sortType,ascending,filter,tasks);
+        grid.setItems(tasks);
+    }
+
+    private void updateCalendar() {
+        ArrayList<Task> tasks = taskManager.getTasks();
+        calendar.removeAllEntries();
+        tasks.forEach(newTask -> {
+            Entry entry = new Entry();
+            entry.setTitle(newTask.getName());
+            entry.setAllDay(true);
+            entry.setEnd(newTask.getNextDue());
+            entry.setStart(newTask.getNextDue());
+            calendar.addEntry(entry);
+            newTask.setEntry(entry);
+        });
     }
     
 }

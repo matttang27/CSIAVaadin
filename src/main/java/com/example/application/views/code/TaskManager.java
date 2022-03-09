@@ -55,6 +55,15 @@ public class TaskManager {
         return -1;
     }
 
+    public Task getTask(int id) {
+        for (int i=0;i<tasks.size();i++) {
+            if (tasks.get(i).id == id) {
+                return tasks.get(i);
+            }
+        }
+        return null;
+    }
+
     public void removeTask(Task task) {
         for (int i=0;i<tasks.size();i++) {
             if (tasks.get(i).id == task.id) {
