@@ -124,11 +124,6 @@
             <version>4.1.2</version>
         </dependency>
         <dependency>
-            <groupId>org.vaadin.zhe</groupId>
-            <artifactId>paper-range-slider</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>exampledata</artifactId>
             <version>4.1.1</version>
