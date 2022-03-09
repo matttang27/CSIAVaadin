@@ -106,16 +106,22 @@ public class TaskView extends VerticalLayout {
         RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
 
 
-        selectSort.setItems("Task Name","Priority","Due Date");
+        selectSort.setItems("Task Name","Priority","Due Date","Time Created");
         selectSort.setValue("Task Name");
         selectSort.addValueChangeListener(e -> {
             switch (e.getValue()) {
                 case "Task Name":
                     sortType = "alpha";
+                    break;
                 case "Priority":
                     sortType = "priority";
+                    break;
                 case "Due Date":
                     sortType = "day";
+                    break;
+                case "Time Created":
+                    sortType = "created";
+                    break;
             }
             updateGrid();
         });
