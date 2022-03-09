@@ -55,6 +55,15 @@ public class TaskManager {
         return -1;
     }
 
+    public Task getTask(int id) {
+        for (int i=0;i<tasks.size();i++) {
+            if (tasks.get(i).id == id) {
+                return tasks.get(i);
+            }
+        }
+        return null;
+    }
+
     public void removeTask(Task task) {
         for (int i=0;i<tasks.size();i++) {
             if (tasks.get(i).id == task.id) {
@@ -198,64 +207,47 @@ public class TaskManager {
      * }
      */
 
-    static ArrayList<Task> sortByAlpha(ArrayList<Task> tasks, Boolean ascending) {
-        ArrayList<Task> sorted = TaskManager.cloneTasks(tasks);
-        Collections.sort(sorted, new Comparator<Task>() {
-            public int compare(Task t1, Task t2) {
-                return t1.name.compareToIgnoreCase(t2.name);
-            }
-        });
 
-        if (!ascending) {
-            Collections.reverse(sorted);
-        }
-        return sorted;
-
-    }
-
-    static ArrayList<Task> sortByDue(ArrayList<Task> tasks, Boolean ascending) {
+    static ArrayList<Task> sort(ArrayList<Task> tasks, String sortType, Boolean ascending) {
         ArrayList<Task> sorted = tasks;
-        Collections.sort(sorted, new Comparator<Task>() {
-            public int compare(Task t1, Task t2) {
-                LocalDateTime d1 = t1.getNextDue();
-                LocalDateTime d2 = t2.getNextDue();
-                return d1.compareTo(d2);
-            }
-        });
 
-        if (!ascending) {
-            Collections.reverse(sorted);
+
+        //uses bubble sort
+        boolean flag = false;
+
+        for (int i=0;i<tasks.size()-1;i++) {
+            flag = false;
+
+            for (int j=0;j<tasks.size()-i-1;j++) {
+                boolean greater = false;
+                if (sortType == "alpha") {
+                    greater = tasks.get(j).getName().compareToIgnoreCase(tasks.get(j+1).getName()) > 0;
+                }
+                else if (sortType == "day") {
+                    greater = tasks.get(j).getNextDue().compareTo(tasks.get(j+1).getNextDue()) > 0;
+                }
+                else if (sortType == "priority") {
+                    greater = tasks.get(j).getPriority() > tasks.get(j+1).getPriority();
+                }
+                else if (sortType == "created") {
+                    greater = tasks.get(j).getCreated().compareTo(tasks.get(j+1).getCreated()) > 0;
+                }
+                else {
+                    System.out.println("sortType was not one of the specified sortTypes");
+                }
+
+                if (greater) {
+                    Task temp = tasks.get(j);
+                    tasks.set(j,tasks.get(j+1));
+                    tasks.set(j+1,temp);
+                    flag = true;
+                }
+
+            }
+            if (flag) {
+                break;
+            }
         }
-        return sorted;
-
-    }
-
-    static ArrayList<Task> sortByCreated(ArrayList<Task> tasks, Boolean ascending) {
-        ArrayList<Task> sorted = tasks;
-        Collections.sort(sorted, new Comparator<Task>() {
-            public int compare(Task t1, Task t2) {
-                LocalDateTime d1 = t1.getCreated();
-                LocalDateTime d2 = t2.getCreated();
-                return d1.compareTo(d2);
-            }
-        });
-
-        if (!ascending) {
-            Collections.reverse(sorted);
-        }
-        return sorted;
-
-    }
-
-    static ArrayList<Task> sortByPriority(ArrayList<Task> tasks, Boolean ascending) {
-        ArrayList<Task> sorted = tasks;
-        Collections.sort(sorted, new Comparator<Task>() {
-            public int compare(Task t1, Task t2) {
-                int p1 = t1.priority;
-                int p2 = t2.priority;
-                return p1 - p2;
-            }
-        });
 
         if (!ascending) {
             Collections.reverse(sorted);
@@ -342,18 +334,7 @@ public class TaskManager {
         //index 1: actual value
 
         //1. Sort
-        if (sort.equals("alpha")) {
-            newTasks = TaskManager.sortByAlpha(newTasks, ascending);
-        }
-        else if (sort.equals("due")) {
-            newTasks = TaskManager.sortByDue(newTasks, ascending);
-        }
-        else if (sort.equals("priority")) {
-            newTasks = TaskManager.sortByPriority(newTasks, ascending);
-        }
-        else if (sort.equals("created")) {
-            newTasks = TaskManager.sortByCreated(newTasks, ascending);
-        }
+        newTasks = TaskManager.sort(newTasks,sort,ascending);
 
         //2. Filters
         if (!filter[0][0].equals("") && !filter[0][1].equals("")) {
