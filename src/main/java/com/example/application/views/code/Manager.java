@@ -7,6 +7,7 @@ public class Manager {
     TaskManager tasker;
     GroupManager grouper;
     User user;
+    StatManager stats;
 
     public GroupManager getGrouper() {
         return this.grouper;

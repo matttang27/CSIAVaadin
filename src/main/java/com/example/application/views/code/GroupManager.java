@@ -16,6 +16,27 @@ public class GroupManager {
         this.groups = groups;
     }
 
+    public void addGroup(Group group) {
+        groups.add(group);
+    }
+
+    public ArrayList<String> getGroupNames() {
+        ArrayList<String> groupNames = new ArrayList<>();
+        groups.forEach(group -> {groupNames.add(group.getName());});
+        return groupNames;
+    }
+
+    public Group findByName(String name) {
+        Group found = null;
+
+        for (int i=0;i<groups.size();i++) {
+            if (groups.get(i).getName().equals(name)) {
+                return groups.get(i);
+            }
+        }
+        
+        return null;
+    }
     
 
 

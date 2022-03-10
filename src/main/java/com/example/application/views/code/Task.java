@@ -16,7 +16,7 @@ public class Task {
     LocalDateTime start;
     LocalDateTime nextDue;
 
-    
+    Group group;
     String cronJob;
     int priority;
     boolean done;
@@ -36,7 +36,7 @@ public class Task {
 
     //Why do i have 3 constructors? ... that's a good question.
 
-    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime start, LocalDateTime nextDue, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String notes, int id, ArrayList<Task> children, String type, Entry entry) {
+    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime start, LocalDateTime nextDue, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String notes, int id, ArrayList<Task> children, String type, Entry entry, Group group) {
         this.name = name;
         this.created = created;
         this.lastEdited = lastEdited;
@@ -54,6 +54,7 @@ public class Task {
         this.children = children;
         this.type = type;
         this.entry = entry;
+        this.group = group;
     }
     
     public Task() {
@@ -69,11 +70,12 @@ public class Task {
         type = "task";
         start = LocalDateTime.now();
     }
-    public Task(String name,LocalDateTime due,int priority) {
+    //creation from Add Task Button
+    public Task(String name,LocalDateTime due,int priority,Group group) {
         this.name = name;
         this.nextDue = due;
         this.priority = priority;
-       
+        this.group = group;
         color=null;
         background="";
         icon="";
@@ -84,6 +86,13 @@ public class Task {
         done = false;
         children = new ArrayList<Task>();
         type = "task";
+    }
+
+    public Group getGroup() {
+        return this.group;
+    }
+    public void setGroup(Group group) {
+        this.group = group;
     }
     public String getName() {
         return this.name;
@@ -261,7 +270,7 @@ public class Task {
 
     public Task clone(){ 
         //thank god for vscode
-        return new Task(name, created, lastEdited, start, nextDue, cronJob, priority, done, color, background, icon, parent, notes, id, children, type,entry);
+        return new Task(name, created, lastEdited, start, nextDue, cronJob, priority, done, color, background, icon, parent, notes, id, children, type,entry,group);
     }
 
 }

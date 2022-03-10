@@ -221,7 +221,7 @@ public class TaskManager {
             for (int j=0;j<tasks.size()-1;j++) {
                 System.out.println(String.format("%d,%d",i,j));
                 boolean greater = false;
-                if (sortType == "alpha") {
+                if (sortType == "taskName") {
                     greater = tasks.get(j).getName().compareToIgnoreCase(tasks.get(j+1).getName()) > 0;
                 }
                 else if (sortType == "day") {

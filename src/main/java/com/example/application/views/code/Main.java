@@ -90,7 +90,7 @@ class Main {
 
                             System.out.println("Enter Priority");
                             int priority = Integer.parseInt(input.nextLine());
-                            Task newTask = new Task(tname, due, priority);
+                            Task newTask = new Task(tname, due, priority, null);
                             taskManager.addTask(newTask);
 
                             System.out.println("A task has been added!");
@@ -124,7 +124,7 @@ class Main {
                             System.out.println("1) Ascending\n2) Descending");
 
                             ascending = (Main.intInput(input, 2) == 1);
-                            sort = new String[] { "alpha", "due", "priority", "created" }[chosen - 1];
+                            sort = new String[] { "taskName", "due", "priority", "created" }[chosen - 1];
 
                             // this is a goddamn lie but they'll never know
                             System.out.println("The tasks have been sorted.");
@@ -215,7 +215,7 @@ class Main {
             
                                         System.out.println("Enter Priority");
                                         priority = Integer.parseInt(input.nextLine());
-                                        newTask = new Task(tname, due, priority);
+                                        newTask = new Task(tname, due, priority,null);
                                         //...i think this works?
                                         openTask.getChildren().add(newTask);
                                         taskManager.addTask(newTask);

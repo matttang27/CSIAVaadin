@@ -22,6 +22,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -54,7 +57,7 @@ public class TaskView extends VerticalLayout {
     private GroupManager groupManager;
     private FullCalendar calendar;
     private Grid<Task> grid;
-    private String sortType = "alpha";
+    private String sortType = "taskName";
     private boolean ascending = true;
     private String[][] filter = { { "", "" }, { "", "" }, { "", "" }, { "", "" } };
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -77,6 +80,12 @@ public class TaskView extends VerticalLayout {
         // PaperSlider slider2 = new PaperSlider();
         // add(slider2);
 
+        Tabs tabs = new Tabs(new Tab("Tasks"),new Tab("Groups"), new Tab("Schedule"),new Tab("Statistics"),new Tab("Tools"));
+        tabs.setOrientation(Tabs.Orientation.HORIZONTAL);
+        tabs.setWidth("100%");
+        tabs.addThemeVariants(TabsVariant.LUMO_EQUAL_WIDTH_TABS);
+        add(new VerticalLayout(tabs));
+        
 
         //import data
         Component c = UI.getCurrent();
@@ -106,12 +115,12 @@ public class TaskView extends VerticalLayout {
         RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
 
 
-        selectSort.setItems("Task Name","Priority","Due Date","Time Created");
+        selectSort.setItems("Task Name","Priority","Due Date","Time Created","Group Name");
         selectSort.setValue("Task Name");
         selectSort.addValueChangeListener(e -> {
             switch (e.getValue()) {
                 case "Task Name":
-                    sortType = "alpha";
+                    sortType = "taskName";
                     break;
                 case "Priority":
                     sortType = "priority";
@@ -121,6 +130,9 @@ public class TaskView extends VerticalLayout {
                     break;
                 case "Time Created":
                     sortType = "created";
+                    break;
+                case "Group Name":
+                    sortType = "groupName";
                     break;
             }
             updateGrid();
@@ -152,6 +164,13 @@ public class TaskView extends VerticalLayout {
         //TODO: Change getNextDue format (preferably without an entire new function)
         grid.addColumn(Task::getNextDue).setHeader("Due").setKey("due");
         grid.addColumn(Task::getPriority).setHeader("Priority").setKey("priority");
+        grid.addComponentColumn(
+
+        task -> {
+            Span groupName = new Span(task.getGroup());
+            pending.getElement().getThemeList().add("badge");
+        }
+        )
         grid.setColumnReorderingAllowed(true);
 
 
@@ -199,6 +218,9 @@ public class TaskView extends VerticalLayout {
         NumberField priorityField = new NumberField("Priority (1-10)");
         priorityField.setRequiredIndicatorVisible(true);
         priorityField.setErrorMessage("This field is required");
+        Select<String> groupField = new Select<>();
+        groupField.setItems(groupManager.getGroupNames());
+
 
         VerticalLayout fieldLayout = new VerticalLayout(nameField,dueField,priorityField);
 
@@ -220,7 +242,7 @@ public class TaskView extends VerticalLayout {
                 return;
             }
             
-            Task newTask = new Task(nameField.getValue(),dueField.getValue(), priorityField.getValue().intValue());
+            Task newTask = new Task(nameField.getValue(),dueField.getValue(), priorityField.getValue().intValue(),groupManager.findByName(groupField.getValue()));
             newTask.setLastEdited(LocalDateTime.now());
             taskManager.addTask(newTask);
             
