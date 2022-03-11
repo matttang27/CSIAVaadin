@@ -198,13 +198,16 @@ public class Task {
         return this.background;
     }
 
+
     @Override
     public String toString() {
         return "{" +
             " name='" + getName() + "'" +
             ", created='" + getCreated() + "'" +
             ", lastEdited='" + getLastEdited() + "'" +
+            ", start='" + getStart() + "'" +
             ", nextDue='" + getNextDue() + "'" +
+            ", group='" + getGroup() + "'" +
             ", cronJob='" + getCronJob() + "'" +
             ", priority='" + getPriority() + "'" +
             ", done='" + isDone() + "'" +
@@ -214,8 +217,12 @@ public class Task {
             ", parent='" + getParent() + "'" +
             ", notes='" + getNotes() + "'" +
             ", id='" + getId() + "'" +
+            ", children='" + getChildren() + "'" +
+            ", type='" + getType() + "'" +
+            ", entry='" + getEntry() + "'" +
             "}";
     }
+
 
     public void setBackground(String background) {
         this.background = background;
