@@ -6,27 +6,17 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import org.vaadin.stefan.fullcalendar.Entry;
+import org.vaadin.stefan.fullcalendar.FullCalendar;
+import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 public class Task {
     String name;
     LocalDateTime created;
     LocalDateTime lastEdited;
+    LocalDateTime start;
     LocalDateTime nextDue;
 
-    public ArrayList<Task> getChildren() {
-        return this.children;
-    }
-
-    public void setChildren(ArrayList<Task> children) {
-        this.children = children;
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+    Group group;
     String cronJob;
     int priority;
     boolean done;
@@ -37,14 +27,20 @@ public class Task {
     String notes;
     int id;
     ArrayList<Task> children;
-    //note that a group is just a task with a different string haha shhhhhhhh
+    //originally Group / Task, may change it to entry / task
     String type;
+    //respective entry in calendar
+    Entry entry;
+
+    
+
     //Why do i have 3 constructors? ... that's a good question.
 
-    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime nextDue, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String notes, int id, ArrayList<Task> children, String type) {
+    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime start, LocalDateTime nextDue, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String notes, int id, ArrayList<Task> children, String type, Entry entry, Group group) {
         this.name = name;
         this.created = created;
         this.lastEdited = lastEdited;
+        this.start = start;
         this.nextDue = nextDue;
         this.cronJob = cronJob;
         this.priority = priority;
@@ -57,6 +53,8 @@ public class Task {
         this.id = id;
         this.children = children;
         this.type = type;
+        this.entry = entry;
+        this.group = group;
     }
     
     public Task() {
@@ -70,21 +68,31 @@ public class Task {
         done = false;
         children = new ArrayList<Task>();
         type = "task";
+        start = LocalDateTime.now();
     }
-    public Task(String name,LocalDateTime due,int priority) {
+    //creation from Add Task Button
+    public Task(String name,LocalDateTime due,int priority,Group group) {
         this.name = name;
         this.nextDue = due;
         this.priority = priority;
-       
+        this.group = group;
         color=null;
         background="";
         icon="";
         notes="";
         created = LocalDateTime.now();
         lastEdited = LocalDateTime.now();
+        start = LocalDateTime.now();
         done = false;
         children = new ArrayList<Task>();
         type = "task";
+    }
+
+    public Group getGroup() {
+        return this.group;
+    }
+    public void setGroup(Group group) {
+        this.group = group;
     }
     public String getName() {
         return this.name;
@@ -129,6 +137,27 @@ public class Task {
         this.nextDue = nextDue.atTime(23,59,59);
     }
 
+    public void setStart(LocalDateTime start) {
+        this.start = start;
+    }
+
+    public void setStart(LocalDate start) {
+        this.start = start.atTime(0,0,0);
+    }
+
+    public LocalDateTime getStart() {
+        return this.start;
+    }
+
+    public Entry getEntry() {
+        return this.entry;
+    }
+
+    public void setEntry(Entry entry) {
+        this.entry = entry;
+    }
+
+
     public String getCronJob() {
         return this.cronJob;
     }
@@ -169,13 +198,16 @@ public class Task {
         return this.background;
     }
 
+
     @Override
     public String toString() {
         return "{" +
             " name='" + getName() + "'" +
             ", created='" + getCreated() + "'" +
             ", lastEdited='" + getLastEdited() + "'" +
+            ", start='" + getStart() + "'" +
             ", nextDue='" + getNextDue() + "'" +
+            ", group='" + getGroup() + "'" +
             ", cronJob='" + getCronJob() + "'" +
             ", priority='" + getPriority() + "'" +
             ", done='" + isDone() + "'" +
@@ -185,8 +217,12 @@ public class Task {
             ", parent='" + getParent() + "'" +
             ", notes='" + getNotes() + "'" +
             ", id='" + getId() + "'" +
+            ", children='" + getChildren() + "'" +
+            ", type='" + getType() + "'" +
+            ", entry='" + getEntry() + "'" +
             "}";
     }
+
 
     public void setBackground(String background) {
         this.background = background;
@@ -223,10 +259,25 @@ public class Task {
     public void setId(int id) {
         this.id = id;
     }
+    public ArrayList<Task> getChildren() {
+        return this.children;
+    }
+
+    public void setChildren(ArrayList<Task> children) {
+        this.children = children;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public Task clone(){ 
         //thank god for vscode
-        return new Task(name, created, lastEdited, nextDue, cronJob, priority, done, color, background, icon, parent, notes, id, children, type);
+        return new Task(name, created, lastEdited, start, nextDue, cronJob, priority, done, color, background, icon, parent, notes, id, children, type,entry,group);
     }
 
 }
