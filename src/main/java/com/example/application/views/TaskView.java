@@ -16,6 +16,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -98,7 +99,7 @@ public class TaskView extends VerticalLayout {
         user = manager.getUser();
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
-
+        groupManager.addGroup(new Group("Test"));
         
         user = manager.getUser();
         taskManager = manager.getTasker();
@@ -158,7 +159,7 @@ public class TaskView extends VerticalLayout {
             checkBox.setValue(task.getDone());
             checkBox.addValueChangeListener(event -> task.setDone(event.getValue())); 
             return checkBox;
-        }).setFrozen(true).setKey("done");
+        }).setFrozen(true).setKey("done").setHeader("Done");
         
         grid.addColumn(Task::getName).setHeader("Name").setKey("name");
         //TODO: Change getNextDue format (preferably without an entire new function)
@@ -167,10 +168,19 @@ public class TaskView extends VerticalLayout {
         grid.addComponentColumn(
 
         task -> {
-            Span groupName = new Span(task.getGroup());
-            pending.getElement().getThemeList().add("badge");
+            if (task.getGroup() != null) {
+                Span groupName = new Span(task.getGroup().getName());
+                groupName.getElement().getThemeList().add("badge");
+                return groupName;
+            }
+            else {
+                Span groupName = new Span("");
+                return groupName;
+                
+            }
+            
         }
-        )
+        ).setHeader("Group").setKey("group");
         grid.setColumnReorderingAllowed(true);
 
 
@@ -219,10 +229,11 @@ public class TaskView extends VerticalLayout {
         priorityField.setRequiredIndicatorVisible(true);
         priorityField.setErrorMessage("This field is required");
         Select<String> groupField = new Select<>();
+        groupField.setLabel("Group");
         groupField.setItems(groupManager.getGroupNames());
+        groupField.setEmptySelectionAllowed(true);
 
-
-        VerticalLayout fieldLayout = new VerticalLayout(nameField,dueField,priorityField);
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,groupField),dueField,priorityField);
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         Button saveButton = new Button("Add", e -> {
@@ -271,6 +282,11 @@ public class TaskView extends VerticalLayout {
         nameField.setValue(selectTask.getName());
         nameField.setRequiredIndicatorVisible(true);
         nameField.setErrorMessage("This field is required");
+        Select<String> groupField = new Select<>();
+        groupField.setItems(groupManager.getGroupNames());
+        groupField.setLabel("Group");
+        groupField.setValue(selectTask.getGroup() != null ? selectTask.getGroup().getName() : "");
+        groupField.setEmptySelectionAllowed(true);
         DateTimePicker dueField = new DateTimePicker("Due Time");
         dueField.setValue(selectTask.getNextDue());
         dueField.setRequiredIndicatorVisible(true);
@@ -295,7 +311,7 @@ public class TaskView extends VerticalLayout {
         Details additionalInfo = new Details("Additional Information",additionalLayout);
         additionalInfo.setOpened(false);
 
-        VerticalLayout fieldLayout = new VerticalLayout(nameField,dueField,priorityField,additionalInfo);
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,groupField),dueField,priorityField,additionalInfo);
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         selectTask.setName("TEST");
@@ -322,6 +338,7 @@ public class TaskView extends VerticalLayout {
             selectTask.setPriority(priorityField.getValue().intValue());
             selectTask.setLastEdited(LocalDateTime.now());
             selectTask.setNotes(notesField.getValue());
+            selectTask.setGroup(groupManager.findByName(groupField.getValue()));
             System.out.println(selectTask);
             
             
