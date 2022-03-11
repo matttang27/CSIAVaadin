@@ -82,6 +82,18 @@ public class TaskView extends VerticalLayout {
         // add(slider2);
 
         Tabs tabs = new Tabs(new Tab("Tasks"),new Tab("Groups"), new Tab("Schedule"),new Tab("Statistics"),new Tab("Tools"));
+        tabs.addSelectedChangeListener(listener -> {
+            Tab tab = listener.getSelectedTab();
+            String tabName = tab.getLabel();
+            if (tabName.equals("Groups")) {
+                tabs.getUI().ifPresent(ui -> {
+                    Component c = ui.getCurrent();
+                    ComponentUtil.setData(c,"manager",manager);
+                    ui.navigate("groups");
+                });
+            }
+        });
+
         tabs.setOrientation(Tabs.Orientation.HORIZONTAL);
         tabs.setWidth("100%");
         tabs.addThemeVariants(TabsVariant.LUMO_EQUAL_WIDTH_TABS);
@@ -187,6 +199,8 @@ public class TaskView extends VerticalLayout {
         add(grid);
         GridContextMenu<Task> menu = grid.addContextMenu();
         menu.addItem("View", event -> {
+            //exits if the user selected empty space
+            if (event.getItem() == null) {return;}
             Task selectedTask = event.getItem().get();
             //we need to get the taskManager task, not the grid task
             selectedTask = taskManager.getTask(selectedTask.getId());
