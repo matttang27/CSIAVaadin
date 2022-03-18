@@ -192,7 +192,7 @@ public class TaskManager {
 
     /*
      * 
-     * TODO: Implement Groups
+     * 
      * static ArrayList<Task> filterByGroup(ArrayList<Task> tasks, ArrayList<String>
      * groups) {
      * if (groups.equals("")) {return tasks;};

@@ -4,16 +4,53 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Group {
-    String name;
-    ArrayList<Task> tasks;
-    LocalDateTime created;
+    private String name = "";
+    private ArrayList<Task> tasks = new ArrayList<Task>();
+    private LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime lastEdited = LocalDateTime.now();
     //optional
-    int goal;
-    
+    private int goal = 0;
+    private String color = "#808080";
+
+    public String getColor() {
+        return this.color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+
+    public Group() {
+    }
+
     public Group(String name) {
         this.name = name;
-        this.tasks = new ArrayList<Task>();
-        this.created = LocalDateTime.now();
+    }
+
+    public Group(String name, ArrayList<Task> tasks, LocalDateTime created, LocalDateTime lastEdited, int goal, String color) {
+        this.name = name;
+        this.tasks = tasks;
+        this.created = created;
+        this.lastEdited = lastEdited;
+        this.goal = goal;
+        this.color = color;
+    }
+    
+    public LocalDateTime getLastEdited() {
+        return this.lastEdited;
+    }
+
+    public void setLastEdited(LocalDateTime lastEdited) {
+        this.lastEdited = lastEdited;
+    }
+
+    public int getGoal() {
+        return this.goal;
+    }
+
+    public void setGoal(int goal) {
+        this.goal = goal;
     }
 
     public String getName() {

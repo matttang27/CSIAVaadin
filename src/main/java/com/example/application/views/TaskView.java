@@ -111,7 +111,6 @@ public class TaskView extends VerticalLayout {
         user = manager.getUser();
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
-        groupManager.addGroup(new Group("Test"));
         
         user = manager.getUser();
         taskManager = manager.getTasker();
@@ -174,8 +173,8 @@ public class TaskView extends VerticalLayout {
         }).setFrozen(true).setKey("done").setHeader("Done");
         
         grid.addColumn(Task::getName).setHeader("Name").setKey("name");
-        //TODO: Change getNextDue format (preferably without an entire new function)
-        grid.addColumn(Task::getNextDue).setHeader("Due").setKey("due");
+        //DONE: Change getNextDue format (preferably without an entire new function)
+        grid.addColumn(Task::getNextDueString).setHeader("Due").setKey("due");
         grid.addColumn(Task::getPriority).setHeader("Priority").setKey("priority");
         grid.addComponentColumn(
 
