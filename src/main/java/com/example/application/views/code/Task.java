@@ -26,6 +26,7 @@ public class Task {
     Task parent;
     String notes;
     int id;
+    int weight;
     ArrayList<Task> children;
     //originally Group / Task, may change it to entry / task
     String type;

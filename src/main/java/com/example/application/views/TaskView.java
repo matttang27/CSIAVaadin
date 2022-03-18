@@ -17,6 +17,8 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -59,6 +61,7 @@ public class TaskView extends VerticalLayout {
     private FullCalendar calendar;
     private Grid<Task> grid;
     private String sortType = "taskName";
+    private String viewMode = "grid";
     private boolean ascending = true;
     private String[][] filter = { { "", "" }, { "", "" }, { "", "" }, { "", "" } };
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -116,8 +119,11 @@ public class TaskView extends VerticalLayout {
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
 
+
+
+
         Dialog addDialog = new Dialog();
-        add(addDialog);
+        
         Button addButton = new Button("Add Task",e -> addDialog.open());
         grid = new Grid<>(Task.class,false);
 
@@ -157,9 +163,7 @@ public class TaskView extends VerticalLayout {
             ascending = e.getValue().equals("Ascending");
             updateGrid();
         });
-        add(new HorizontalLayout(addButton,selectSort,radioGroup));
-
-
+        
 
 
         grid.setItems(taskManager.getTasks());
@@ -195,7 +199,7 @@ public class TaskView extends VerticalLayout {
         grid.setColumnReorderingAllowed(true);
 
 
-        add(grid);
+        
         GridContextMenu<Task> menu = grid.addContextMenu();
         menu.addItem("View", event -> {
             //exits if the user selected empty space
@@ -219,11 +223,53 @@ public class TaskView extends VerticalLayout {
 
 
         calendar = FullCalendarBuilder.create().build();
-        add(calendar);
-        calendar.setHeight("500px");
-        calendar.setWidth("1000px");
+
 
         
+        calendar.setHeight("500px");
+        calendar.setWidth("1000px");
+        calendar.setVisible(false);
+
+        MenuBar showGrid = new MenuBar();
+        showGrid.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
+        showGrid.addItem("Grid");
+        MenuBar showCalendar = new MenuBar();
+        showCalendar.addItem("Calendar");
+        //TODO: Improve the view switch function
+        showGrid.getItems().get(0).addClickListener(e -> {
+            //not sure if there's a better way to do this
+            //maybe i should've just copied navbar lol
+            
+            if (!viewMode.equals("grid")) {
+                showCalendar.removeThemeVariants(MenuBarVariant.LUMO_PRIMARY);
+                showGrid.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
+                grid.setVisible(true);
+                calendar.setVisible(false);
+                viewMode = "grid";
+            }
+            
+            
+        });
+        showCalendar.getItems().get(0).addClickListener(e -> {
+            //not sure if there's a better way to do this
+            //maybe i should've just copied navbar lol
+            if (!viewMode.equals("calendar")) {
+                showGrid.removeThemeVariants(MenuBarVariant.LUMO_PRIMARY);
+                showCalendar.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
+                grid.setVisible(false);
+                calendar.setVisible(true);
+                viewMode = "calendar";
+
+            }
+            
+            
+        });
+        
+        
+
+        add(addDialog);
+        add(new HorizontalLayout(new HorizontalLayout(addButton,selectSort,radioGroup),new HorizontalLayout(showGrid,showCalendar)));
+        add(grid,calendar);
         
     }
     //addTaskLayout - creates the Layout for the Add Task Dialog
