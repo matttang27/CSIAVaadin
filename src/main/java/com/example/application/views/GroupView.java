@@ -106,7 +106,7 @@ public class GroupView extends VerticalLayout {
             board.removeAll();
             ArrayList<Group> groups = groupManager.getGroups();
             if (groups.size() != 0) {
-                for (int i=0;i<Math.ceil(groups.size()+1/2);i++) {
+                for (int i=0;i<(groups.size()-1)/2 + 1;i++) {
                     HorizontalLayout row = new HorizontalLayout();
                     row.add(groupToBoard(groups.get(i*2)));
                     if (i*2+1 < groups.size()) {
