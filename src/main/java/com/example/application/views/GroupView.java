@@ -38,8 +38,6 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.textfield.*;
 import java.awt.Color;
-
-@JsModule("./src/main/java/com/example/application/views/GroupView.java")
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("Groups")
 @Route(value = "groups")

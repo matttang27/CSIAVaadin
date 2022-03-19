@@ -246,6 +246,7 @@ public class TaskView extends VerticalLayout {
                 grid.setVisible(true);
                 calendar.setVisible(false);
                 viewMode = "grid";
+                
             }
             
             
@@ -257,7 +258,9 @@ public class TaskView extends VerticalLayout {
                 showGrid.removeThemeVariants(MenuBarVariant.LUMO_PRIMARY);
                 showCalendar.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
                 grid.setVisible(false);
+                
                 calendar.setVisible(true);
+                calendar.setWidthFull();
                 viewMode = "calendar";
 
             }
@@ -439,6 +442,7 @@ public class TaskView extends VerticalLayout {
 
     private void updateCalendar() {
         ArrayList<Task> tasks = taskManager.getTasks();
+        
         calendar.removeAllEntries();
         tasks.forEach(newTask -> {
             Entry entry = new Entry();
@@ -449,6 +453,7 @@ public class TaskView extends VerticalLayout {
             calendar.addEntry(entry);
             newTask.setEntry(entry);
         });
+        
     }
     
 }
