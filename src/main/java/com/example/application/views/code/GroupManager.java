@@ -17,6 +17,7 @@ public class GroupManager {
     }
 
     public void addGroup(Group group) {
+        group.setId(groups.size());
         groups.add(group);
     }
 

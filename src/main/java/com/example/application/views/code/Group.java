@@ -11,6 +11,7 @@ public class Group {
     //optional
     private int goal = 0;
     private String color = "#808080";
+    private int id;
 
     public String getColor() {
         return this.color;
@@ -20,6 +21,14 @@ public class Group {
         this.color = color;
     }
 
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public Group() {
     }
