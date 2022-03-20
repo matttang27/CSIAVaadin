@@ -107,7 +107,7 @@ class Main {
 
                             System.out.printf(
                                     "Are you sure you want to delete %s? ALL SUBTASKS WILL BE DELETED\nType \"yes\" to confirm.\n",
-                                    deleteTask.name);
+                                    deleteTask.getName());
 
                             if (input.nextLine().toLowerCase().equals("yes")) {
                                 taskManager.removeTask(deleteTask);
@@ -194,7 +194,7 @@ class Main {
                                     case 2:
                                         System.out.printf(
                                                 "Are you sure you want to delete %s? ALL SUBTASKS WILL BE DELETED\nType \"yes\" to confirm.\n",
-                                                openTask.name);
+                                                openTask.getName());
 
                                         if (input.nextLine().toLowerCase().equals("yes")) {
                                             taskManager.removeTask(openTask);
@@ -223,7 +223,7 @@ class Main {
                                         System.out.println("A subtask has been added!");
                                         break;
                                     case 4:
-                                        if (openTask.children.size() == 0) {
+                                        if (openTask.getChildren().size() == 0) {
                                             System.out.println("No subtasks");
                                             break;
                                         }

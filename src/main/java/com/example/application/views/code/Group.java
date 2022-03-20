@@ -15,6 +15,17 @@ public class Group {
     private String color = "#808080";
     private int id;
     private Icon icon;
+    private String notes = "";
+
+    public String getNotes() {
+        return this.notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+
 
     public Icon getIcon() {
         return this.icon;
@@ -46,6 +57,8 @@ public class Group {
 
     public Group(String name) {
         this.name = name;
+        this.created = LocalDateTime.now();
+        this.lastEdited = LocalDateTime.now();
     }
 
     public Group(String name, ArrayList<Task> tasks, LocalDateTime created, LocalDateTime lastEdited, int goal, String color) {

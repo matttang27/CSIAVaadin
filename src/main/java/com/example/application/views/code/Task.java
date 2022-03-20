@@ -10,30 +10,27 @@ import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 public class Task {
-    String name;
-    LocalDateTime created;
-    LocalDateTime lastEdited;
-    LocalDateTime start;
-    LocalDateTime nextDue;
-
-    Group group;
-    String cronJob;
-    int priority;
-    boolean done;
-    Color color;
-    String background;
-    String icon;
-    Task parent;
-    String notes;
-    int id;
-    int weight;
-    ArrayList<Task> children;
+    private String name;
+    private LocalDateTime created;
+    private LocalDateTime lastEdited;
+    private LocalDateTime start;
+    private LocalDateTime nextDue;
+    private Group group;
+    private String cronJob;
+    private int priority;
+    private boolean done;
+    private Color color;
+    private String background;
+    private String icon;
+    private Task parent;
+    private String notes;
+    private int id;
+    private int weight;
+    private ArrayList<Task> children;
     //originally Group / Task, may change it to entry / task
-    String type;
+    private String type;
     //respective entry in calendar
-    Entry entry;
-
-    
+    private Entry entry;
 
     //Why do i have 3 constructors? ... that's a good question.
 

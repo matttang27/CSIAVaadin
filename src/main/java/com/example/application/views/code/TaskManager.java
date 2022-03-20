@@ -39,7 +39,7 @@ public class TaskManager {
 
     public int getIndex(int id) {
         for (int i=0;i<tasks.size();i++) {
-            if (tasks.get(i).id == id) {
+            if (tasks.get(i).getId() == id) {
                 return i;
             }
         }
@@ -48,7 +48,7 @@ public class TaskManager {
 
     public int getIndex(Task task) {
         for (int i=0;i<tasks.size();i++) {
-            if (tasks.get(i).id == task.id) {
+            if (tasks.get(i).getId() == task.getId()) {
                 return i;
             }
         }
@@ -57,7 +57,7 @@ public class TaskManager {
 
     public Task getTask(int id) {
         for (int i=0;i<tasks.size();i++) {
-            if (tasks.get(i).id == id) {
+            if (tasks.get(i).getId() == id) {
                 return tasks.get(i);
             }
         }
@@ -66,7 +66,7 @@ public class TaskManager {
 
     public void removeTask(Task task) {
         for (int i=0;i<tasks.size();i++) {
-            if (tasks.get(i).id == task.id) {
+            if (tasks.get(i).getId() == task.getId()) {
                 tasks.remove(i);
             }
         }
@@ -86,17 +86,17 @@ public class TaskManager {
             //if over is true, does >=, but if false, does <=
             //never mind over is now an int haha dammit
             if (over == -1) {
-                if (task.name.compareToIgnoreCase(alpha) <= 0) {
+                if (task.getName().compareToIgnoreCase(alpha) <= 0) {
                     filtered.add(task);
                 }
             }
             else if (over == 0) {
-                if (task.name.compareToIgnoreCase(alpha) == 0) {
+                if (task.getName().compareToIgnoreCase(alpha) == 0) {
                     filtered.add(task);
                 }
             }
             else if (over == 1) {
-                if (task.name.compareToIgnoreCase(alpha) >= 0) {
+                if (task.getName().compareToIgnoreCase(alpha) >= 0) {
                     filtered.add(task);
                 }
             }
@@ -171,17 +171,17 @@ public class TaskManager {
         ArrayList<Task> filtered = new ArrayList<Task>();
         tasks.forEach((task) -> {
             if (over == -1) {
-                if (task.priority <= priority) {
+                if (task.getPriority() <= priority) {
                     filtered.add(task);
                 }
             }
             else if (over == 0) {
-                if (task.priority == priority) {
+                if (task.getPriority() == priority) {
                     filtered.add(task);
                 }
             }
             else if (over == 1) {
-                if (task.priority >= priority) {
+                if (task.getPriority() >= priority) {
                     filtered.add(task);
                 }
             }
@@ -272,7 +272,7 @@ public class TaskManager {
         String output = "";
         for (int i = 0; i < tasks.size(); i++) {
             Task t = tasks.get(i);
-            output += String.format("%s - Due: %s - Done: %s - Priority: %d\n", t.name, t.nextDue, t.done, t.priority);
+            output += String.format("%s - Due: %s - Done: %s - Priority: %d\n", t.getName(), t.getNextDue(), t.getDone(), t.getPriority());
         }
         return output;
     }
@@ -285,7 +285,7 @@ public class TaskManager {
         String output = "";
         for (int i = 0; i < tasks.size(); i++) {
             Task t = tasks.get(i);
-            output += String.format("%s - Due: %s - Done: %s - Priority: %d\n", t.name, t.nextDue, t.done, t.priority);
+            output += String.format("%s - Due: %s - Done: %s - Priority: %d\n", t.getName(), t.getNextDue(), t.getDone(), t.getPriority());
         }
         return output;
     }
@@ -298,7 +298,7 @@ public class TaskManager {
         String output = "";
         for (int i = 0; i < tasks.size(); i++) {
             Task t = tasks.get(i);
-            output += String.format("%d) %s - Due: %s - Done: %s - Priority: %d\n", i+1, t.name, t.nextDue, t.done, t.priority);
+            output += String.format("%d) %s - Due: %s - Done: %s - Priority: %d\n", i+1, t.getName(), t.getNextDue(), t.getDone(), t.getPriority());
         }
         System.out.println(output);
         System.out.println("Select a task using the numbers.");
