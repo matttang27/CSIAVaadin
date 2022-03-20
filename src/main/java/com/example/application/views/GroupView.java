@@ -2,12 +2,16 @@ package com.example.application.views;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 import com.example.application.views.code.*;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -17,6 +21,8 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -32,6 +38,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.details.Details;
@@ -47,8 +54,19 @@ public class GroupView extends VerticalLayout {
     private Manager manager;
     private TaskManager taskManager;
     private GroupManager groupManager;
+    private ArrayList<VaadinIcon> vIcons = new ArrayList<VaadinIcon>(Arrays.asList(VaadinIcon.values()));
+    private Collection<Icon> icons = new ArrayList<Icon>();
+    
      
     public GroupView() {
+
+        for (int i=0;i<vIcons.size();i++) {
+            icons.add(new Icon(vIcons.get(i)));
+        };
+        
+        
+        
+        
         Tab thisTab = new Tab("Groups");
         Tabs tabs = new Tabs(new Tab("Tasks"),thisTab, new Tab("Schedule"),new Tab("Statistics"),new Tab("Tools"));
         tabs.addSelectedChangeListener(listener -> {
@@ -140,8 +158,13 @@ public class GroupView extends VerticalLayout {
         
         Span pending = new Span("Doing");
         pending.getElement().getThemeList().add("badge");
-
-        boardPiece.add(colorPiece,title,pending);
+        if (group.getIcon() == null) {
+            boardPiece.add(new HorizontalLayout(title),pending);
+        }
+        else {
+            boardPiece.add(new HorizontalLayout(group.getIcon(),title),pending);
+        }
+        
 
         return new VerticalLayout(colorPiece,boardPiece);
     }
@@ -153,6 +176,25 @@ public class GroupView extends VerticalLayout {
         
         H2 title = new H2("Add a new task");
 
+        ComboBox<Icon> selectIcon = new ComboBox<>();
+        selectIcon.setItemLabelGenerator(i -> {
+            
+            return i.getElement().getAttribute("icon").split(":")[1];
+        });
+        selectIcon.setRenderer(new ComponentRenderer<>(icon -> {
+            Div div = new Div();
+            
+            div.add(icon);
+            div.add(new Text(icon.getElement().getAttribute("icon").split(":")[1]));
+        
+            return div;
+        }));
+        selectIcon.setLabel("Icon");
+        
+        
+        selectIcon.setItems(icons);
+        
+
         TextField nameField = new TextField("Task Name");
         nameField.setRequiredIndicatorVisible(true);
         nameField.setErrorMessage("This field is required");
@@ -160,7 +202,7 @@ public class GroupView extends VerticalLayout {
         NumberField goalField = new NumberField("Goal (>0)");
         goalField.setRequiredIndicatorVisible(false);
 
-        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,colorPicker),goalField);
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,selectIcon),colorPicker,goalField);
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         Button saveButton = new Button("Add", e -> {
@@ -183,6 +225,7 @@ public class GroupView extends VerticalLayout {
             Group newGroup = new Group(nameField.getValue());
             newGroup.setLastEdited(LocalDateTime.now());
             newGroup.setColor(colorPicker.getValue());
+            newGroup.setIcon(selectIcon.getValue());
             groupManager.addGroup(newGroup);
             
             PopulateBoard();

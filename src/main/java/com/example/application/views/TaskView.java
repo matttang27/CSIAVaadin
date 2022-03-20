@@ -17,6 +17,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.notification.Notification;
@@ -66,6 +67,7 @@ public class TaskView extends VerticalLayout {
     private String[][] filter = { { "", "" }, { "", "" }, { "", "" }, { "", "" } };
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public TaskView() {
+        
 
         
         // Sign-in not implemented yet

@@ -3,6 +3,8 @@ package com.example.application.views.code;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import com.vaadin.flow.component.icon.Icon;
+
 public class Group {
     private String name = "";
     private ArrayList<Task> tasks = new ArrayList<Task>();
@@ -12,6 +14,15 @@ public class Group {
     private int goal = 0;
     private String color = "#808080";
     private int id;
+    private Icon icon;
+
+    public Icon getIcon() {
+        return this.icon;
+    }
+
+    public void setIcon(Icon icon) {
+        this.icon = icon;
+    }
 
     public String getColor() {
         return this.color;
