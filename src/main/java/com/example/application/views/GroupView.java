@@ -57,6 +57,7 @@ public class GroupView extends VerticalLayout {
     private GroupManager groupManager;
     private ArrayList<VaadinIcon> vIcons = new ArrayList<VaadinIcon>(Arrays.asList(VaadinIcon.values()));
     private Collection<Icon> icons = new ArrayList<Icon>();
+    private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     
      
     public GroupView() {
@@ -121,7 +122,7 @@ public class GroupView extends VerticalLayout {
     }
     public void PopulateBoard() {
         UI.getCurrent().getPage().retrieveExtendedClientDetails(receiver -> {
-            int screenWidth = receiver.getScreenWidth();
+            //int screenWidth = receiver.getScreenWidth();
             board.removeAll();
             ArrayList<Group> groups = groupManager.getGroups();
             if (groups.size() != 0) {
@@ -311,7 +312,27 @@ public class GroupView extends VerticalLayout {
         NumberField goalField = new NumberField("Goal (>0)");
         goalField.setRequiredIndicatorVisible(false);
         goalField.setValue((double) group.getGoal());
-        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,selectIcon),colorPicker,goalField);
+
+        
+
+        TextField createdField = new TextField("Date created");
+        createdField.setReadOnly(true);
+        createdField.setValue(group.getCreated().format(defDTFormat));
+        TextField editField = new TextField("Last edited");
+        editField.setValue(group.getLastEdited().format(defDTFormat));
+        editField.setReadOnly(true);
+
+
+        TextArea notesField = new TextArea("Notes");
+        notesField.setValue(group.getNotes());
+
+        VerticalLayout additionalLayout = new VerticalLayout(new HorizontalLayout(createdField,editField),notesField);
+
+        Details additionalInfo = new Details("Additional Information",additionalLayout);
+        additionalInfo.setOpened(false);
+
+
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,selectIcon),colorPicker,goalField,additionalInfo);
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         Button saveButton = new Button("Save", e -> {
@@ -334,6 +355,7 @@ public class GroupView extends VerticalLayout {
             group.setLastEdited(LocalDateTime.now());
             group.setColor(colorPicker.getValue());
             group.setIcon(selectIcon.getValue());
+            group.setNotes(notesField.getValue());
             
             PopulateBoard();
 
