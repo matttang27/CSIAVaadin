@@ -185,16 +185,21 @@ public class TaskView extends VerticalLayout {
         grid.addComponentColumn(
 
         task -> {
+            HorizontalLayout div = new HorizontalLayout();
             if (task.getGroup() != null) {
+                
+                if (task.getGroup().getIcon() != null) {
+                    div.add(task.getGroup().getIcon());
+                }
                 Span groupName = new Span(task.getGroup().getName());
-                groupName.getElement().getThemeList().add("badge");
-                return groupName;
+                div.add(groupName);
             }
             else {
                 Span groupName = new Span("");
-                return groupName;
+                div.add(groupName);
                 
             }
+            return div;
             
         }
         ).setHeader("Group").setKey("group");

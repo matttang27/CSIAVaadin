@@ -39,6 +39,7 @@ import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.details.Details;
@@ -103,13 +104,13 @@ public class GroupView extends VerticalLayout {
         groupManager.addGroup(new Group("Test"));
 
         board = new VerticalLayout();
-        add(board);
+        
         PopulateBoard();
 
         Dialog addDialog = new Dialog();
-        add(addDialog);
+        
         Button addButton = new Button("Add Group",e -> addDialog.open());
-        add(addButton);
+        add(addButton,board,addDialog);
         
 
         addDialog.add(addGroupLayout(addDialog));
@@ -124,15 +125,22 @@ public class GroupView extends VerticalLayout {
             board.removeAll();
             ArrayList<Group> groups = groupManager.getGroups();
             if (groups.size() != 0) {
-                for (int i=0;i<(groups.size()-1)/2 + 1;i++) {
+                //how many items per row
+                final int ROW = 4;
+                for (int i=0;i<(groups.size()-1)/ROW + 1;i++) {
                     HorizontalLayout row = new HorizontalLayout();
-                    row.add(groupToBoard(groups.get(i*2)));
-                    if (i*2+1 < groups.size()) {
-                        row.add(groupToBoard(groups.get(i*2+1)));
+                    row.setWidthFull();
+                    row.add(groupToBoard(groups.get(i*ROW)));
+                    for (int j=1;j<ROW;j++) {
+                        if (i*ROW+j < groups.size()) {
+                            row.add(groupToBoard(groups.get(i*ROW+j)));
+                        }
+                        else {
+                            row.add(new VerticalLayout());
+                            
+                        }
                     }
-                    else {
-                        row.add(new VerticalLayout());
-                    }
+                    
 
                     board.add(row);
                 }
@@ -153,6 +161,7 @@ public class GroupView extends VerticalLayout {
         boardPiece.getStyle().set("border","1px solid grey");
         boardPiece.getStyle().set("margin","0px");
         
+        
         H3 title = new H3(group.getName());
 
         
@@ -164,9 +173,23 @@ public class GroupView extends VerticalLayout {
         else {
             boardPiece.add(new HorizontalLayout(group.getIcon(),title),pending);
         }
-        
+        VerticalLayout finalLayout = new VerticalLayout(colorPiece,boardPiece);
+        ContextMenu groupMenu = new ContextMenu();
+        groupMenu.setTarget(finalLayout);
+        groupMenu.addItem("View", event -> {
+            Dialog itemDialog = new Dialog();
+            itemDialog.add(showGroupLayout(itemDialog,group));
+            itemDialog.open();
+        });
+        //TODO: figure out how to color GridContextMenu options
+        groupMenu.addItem("Delete", event -> {
+            groupManager.removeGroup(group);
+            PopulateBoard();
+            
+            
+        });
 
-        return new VerticalLayout(colorPiece,boardPiece);
+        return finalLayout;
     }
 
     public VerticalLayout addGroupLayout(Dialog dialog) {
@@ -174,7 +197,7 @@ public class GroupView extends VerticalLayout {
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.setValue("#808080");
         
-        H2 title = new H2("Add a new task");
+        H2 title = new H2("Add a new group");
 
         ComboBox<Icon> selectIcon = new ComboBox<>();
         selectIcon.setItemLabelGenerator(i -> {
@@ -201,6 +224,7 @@ public class GroupView extends VerticalLayout {
 
         NumberField goalField = new NumberField("Goal (>0)");
         goalField.setRequiredIndicatorVisible(false);
+        goalField.setValue(0.0);
 
         VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,selectIcon),colorPicker,goalField);
 
@@ -211,8 +235,8 @@ public class GroupView extends VerticalLayout {
             if (nameField.getValue() == null) {
                 error = "Fill in all required fields";
             }
-            else if (goalField.getValue() != null && goalField.getValue().intValue() < 1) {
-                error = "Priority not in range";
+            else if (goalField.getValue() != null && goalField.getValue().intValue() < 0) {
+                error = "Priority must be 0 or greater";
             }
 
             if (!error.equals("")) {
@@ -223,14 +247,97 @@ public class GroupView extends VerticalLayout {
             }
             
             Group newGroup = new Group(nameField.getValue());
+            
             newGroup.setLastEdited(LocalDateTime.now());
             newGroup.setColor(colorPicker.getValue());
             newGroup.setIcon(selectIcon.getValue());
+            newGroup.setGoal(goalField.getValue().intValue());
             groupManager.addGroup(newGroup);
             
             PopulateBoard();
 
             Notification addTaskNotif = Notification.show("Added your Group!");
+            addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            addTaskNotif.setDuration(2000);
+            dialog.close();
+
+
+            
+        });
+        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton,saveButton);
+        
+        VerticalLayout dialogLayout = new VerticalLayout(title,fieldLayout,buttonLayout);
+
+        
+        return dialogLayout;
+    }
+
+    public VerticalLayout showGroupLayout(Dialog dialog,Group group) {
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setValue(group.getColor());
+        
+        H2 title = new H2("Your group");
+
+        ComboBox<Icon> selectIcon = new ComboBox<>();
+        selectIcon.setItemLabelGenerator(i -> {
+            
+            return i.getElement().getAttribute("icon").split(":")[1];
+        });
+        selectIcon.setRenderer(new ComponentRenderer<>(icon -> {
+            Div div = new Div();
+            
+            div.add(icon);
+            div.add(new Text(icon.getElement().getAttribute("icon").split(":")[1]));
+        
+            return div;
+        }));
+        selectIcon.setLabel("Icon");
+        
+        
+        selectIcon.setItems(icons);
+        if (group.getIcon() != null) {
+            selectIcon.setValue(group.getIcon());
+        }
+        
+
+        TextField nameField = new TextField("Task Name");
+        nameField.setRequiredIndicatorVisible(true);
+        nameField.setErrorMessage("This field is required");
+        if (group.getName() != null) {
+            nameField.setValue(group.getName());
+        }
+        NumberField goalField = new NumberField("Goal (>0)");
+        goalField.setRequiredIndicatorVisible(false);
+        goalField.setValue((double) group.getGoal());
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,selectIcon),colorPicker,goalField);
+
+        Button cancelButton = new Button("Cancel", e -> dialog.close());
+        Button saveButton = new Button("Save", e -> {
+            //checks whether any of the fields are empty, if true, sends a notification and cancels
+            String error = "";
+            if (nameField.getValue() == null) {
+                error = "Fill in all required fields";
+            }
+            else if (goalField.getValue() != null && goalField.getValue().intValue() < 0) {
+                error = "Priority must be 0 or greater";
+            }
+
+            if (!error.equals("")) {
+                Notification errorNotif = Notification.show(error);
+                errorNotif.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                errorNotif.setDuration(2000);
+                return;
+            }
+            group.setName(nameField.getValue());
+            group.setLastEdited(LocalDateTime.now());
+            group.setColor(colorPicker.getValue());
+            group.setIcon(selectIcon.getValue());
+            
+            PopulateBoard();
+
+            Notification addTaskNotif = Notification.show("Group updated!");
             addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             addTaskNotif.setDuration(2000);
             dialog.close();

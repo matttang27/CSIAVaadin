@@ -21,6 +21,14 @@ public class GroupManager {
         groups.add(group);
     }
 
+    public void removeGroup(Group group) {
+        for (int i=0;i<groups.size();i++) {
+            if (groups.get(i).getId() == group.getId()) {
+                groups.remove(i);
+            }
+        }
+    }
+
     public ArrayList<String> getGroupNames() {
         ArrayList<String> groupNames = new ArrayList<>();
         groups.forEach(group -> {groupNames.add(group.getName());});
