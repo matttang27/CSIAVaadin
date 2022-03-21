@@ -6,6 +6,7 @@ public class Manager {
     //currently this is so that everything can be connected to one spot, but not sure if I really need that
     TaskManager tasker;
     GroupManager grouper;
+    StatManager stater;
     User user;
     StatManager stats;
 
@@ -26,8 +27,9 @@ public class Manager {
     }
     ArrayList<Schedule> schedule;
     public Manager() {
-        tasker = new TaskManager();
-        grouper = new GroupManager();
+        tasker = new TaskManager(this);
+        grouper = new GroupManager(this);
+        stater = new StatManager(this);
         schedule = new ArrayList<Schedule>();
     }
 
@@ -52,6 +54,22 @@ public class Manager {
         return "{" +
             " tasker='" + getTasker() + "'" +
             "}";
+    }
+
+    public StatManager getStater() {
+        return this.stater;
+    }
+
+    public void setStater(StatManager stater) {
+        this.stater = stater;
+    }
+
+    public StatManager getStats() {
+        return this.stats;
+    }
+
+    public void setStats(StatManager stats) {
+        this.stats = stats;
     }
 
 }

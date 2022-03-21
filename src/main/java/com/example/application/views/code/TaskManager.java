@@ -9,11 +9,19 @@ import java.time.temporal.ChronoUnit;
 
 public class TaskManager {
     ArrayList<Task> tasks;
-    
+    Manager manager;
 
-    TaskManager() {
+    TaskManager(Manager manager) {
         tasks = new ArrayList<Task>();
-        
+        this.manager = manager;
+    }
+
+    public Manager getManager() {
+        return this.manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 
     public ArrayList<Task> getTasks() {

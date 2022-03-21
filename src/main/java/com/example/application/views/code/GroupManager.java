@@ -3,9 +3,18 @@ import java.util.ArrayList;
 //honestly I'm not sure if I even need a GroupManager
 public class GroupManager {
     ArrayList<Group> groups;
-
-    public GroupManager() {
+    Manager manager;
+    public GroupManager(Manager manager) {
         groups = new ArrayList<Group>();
+        this.manager = manager;
+    }
+
+    public Manager getManager() {
+        return this.manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 
     public ArrayList<Group> getGroups() {
