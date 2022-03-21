@@ -12,6 +12,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
@@ -64,6 +65,7 @@ public class TaskView extends VerticalLayout {
     private String sortType = "taskName";
     private String viewMode = "grid";
     private boolean ascending = true;
+    private boolean showDoneB = false;
     private String[][] filter = { { "", "" }, { "", "" }, { "", "" }, { "", "" } };
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public TaskView() {
@@ -166,6 +168,13 @@ public class TaskView extends VerticalLayout {
             updateGrid();
         });
         
+        Checkbox showDone = new Checkbox();
+        showDone.setLabel("Show Done");
+        
+        showDone.addClickListener(e -> {
+            showDoneB = e.getSource().getValue();
+            updateGrid();
+        });
 
 
         grid.setItems(taskManager.getTasks());
@@ -173,8 +182,24 @@ public class TaskView extends VerticalLayout {
             
         task -> {
             Checkbox checkBox = new Checkbox();
+            
             checkBox.setValue(task.getDone());
-            checkBox.addValueChangeListener(event -> task.setDone(event.getValue())); 
+            checkBox.addClickListener(event -> {
+                //we need to get the taskManager task, not the grid task
+                Task selectedTask = taskManager.getTask(task.getId());
+                System.out.println(event.getSource().getValue());
+                
+                selectedTask.setDone(event.getSource().getValue());
+                if (event.getSource().getValue()) {
+                    Notification doneNotif = Notification.show("Completed Task!");
+                    doneNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    doneNotif.setDuration(2000);
+
+                }
+                updateGrid();
+                
+            }); 
+            
             return checkBox;
         }).setFrozen(true).setKey("done").setHeader("Done");
         
@@ -191,8 +216,13 @@ public class TaskView extends VerticalLayout {
                 if (task.getGroup().getIcon() != null) {
                     div.add(task.getGroup().getIcon());
                 }
+                Div colorDiv = new Div();
+                colorDiv.getStyle().set("background-color",task.getGroup().getColor());
+                colorDiv.getStyle().set("border","1px solid grey");
+                colorDiv.setWidth("20px");
+
                 Span groupName = new Span(task.getGroup().getName());
-                div.add(groupName);
+                div.add(colorDiv,groupName);
             }
             else {
                 Span groupName = new Span("");
@@ -278,7 +308,7 @@ public class TaskView extends VerticalLayout {
         
 
         add(addDialog);
-        add(new HorizontalLayout(new HorizontalLayout(addButton,selectSort,radioGroup),new HorizontalLayout(showGrid,showCalendar)));
+        add(new HorizontalLayout(new HorizontalLayout(addButton,selectSort,radioGroup,showDone),new HorizontalLayout(showGrid,showCalendar)));
         add(grid,calendar);
         
     }
@@ -347,6 +377,8 @@ public class TaskView extends VerticalLayout {
     }
 
     private VerticalLayout viewItemLayout(Dialog dialog,Grid grid,Task selectTask) {
+        H2 title = new H2(selectTask.getName());
+
         TextField nameField = new TextField("Task Name");
         nameField.setValue(selectTask.getName());
         nameField.setRequiredIndicatorVisible(true);
@@ -380,7 +412,7 @@ public class TaskView extends VerticalLayout {
         Details additionalInfo = new Details("Additional Information",additionalLayout);
         additionalInfo.setOpened(false);
 
-        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,groupField),dueField,priorityField,additionalInfo);
+        VerticalLayout fieldLayout = new VerticalLayout(title,new HorizontalLayout(nameField,groupField),dueField,priorityField,additionalInfo);
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         selectTask.setName("TEST");
@@ -443,7 +475,7 @@ public class TaskView extends VerticalLayout {
     private void updateGrid() {
         ArrayList<Task> tasks = taskManager.getTasks();
         
-        tasks = TaskManager.taskSortFilter(sortType,ascending,filter,tasks);
+        tasks = TaskManager.taskSortFilter(sortType,ascending,showDoneB,filter,tasks);
         grid.setItems(tasks);
     }
 

@@ -74,7 +74,7 @@ class Main {
                         case "1":
                             System.out.println("Tasks:\n");
                             tempTasks = taskManager.cloneTasks();
-                            tempTasks = TaskManager.taskSortFilter(sort, ascending, filter, tempTasks);
+                            tempTasks = TaskManager.taskSortFilter(sort, ascending, ascending, filter, tempTasks);
 
                             // while originally i had a seperate array that was edited
                             // program now manually generates the task copy and filter / sorts it.

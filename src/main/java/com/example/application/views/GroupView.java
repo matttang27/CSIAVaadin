@@ -168,12 +168,14 @@ public class GroupView extends VerticalLayout {
         
         Span pending = new Span("Doing");
         pending.getElement().getThemeList().add("badge");
-        if (group.getIcon() == null) {
-            boardPiece.add(new HorizontalLayout(title),pending);
+
+        Div titlePart = new Div();
+        titlePart.getStyle().set("display","inline-block");
+        if (group.getIcon() != null) {
+            titlePart.add(group.getIcon());
         }
-        else {
-            boardPiece.add(new HorizontalLayout(group.getIcon(),title),pending);
-        }
+        titlePart.add(title);
+        boardPiece.add(titlePart,pending);
         VerticalLayout finalLayout = new VerticalLayout(colorPiece,boardPiece);
         ContextMenu groupMenu = new ContextMenu();
         groupMenu.setTarget(finalLayout);
@@ -207,7 +209,6 @@ public class GroupView extends VerticalLayout {
         });
         selectIcon.setRenderer(new ComponentRenderer<>(icon -> {
             Div div = new Div();
-            
             div.add(icon);
             div.add(new Text(icon.getElement().getAttribute("icon").split(":")[1]));
         
@@ -279,7 +280,7 @@ public class GroupView extends VerticalLayout {
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.setValue(group.getColor());
         
-        H2 title = new H2("Your group");
+        H2 title = new H2(group.getName());
 
         ComboBox<Icon> selectIcon = new ComboBox<>();
         selectIcon.setItemLabelGenerator(i -> {

@@ -325,9 +325,18 @@ public class TaskManager {
         }
         return a;
     }
+    static public ArrayList<Task> removeDone(ArrayList<Task> tasks) {
+        ArrayList<Task> a = new ArrayList<Task>();
+        for (Task t: tasks) {
+            if (!t.getDone()) {
+                a.add(t);
+            } 
+        }
+        return a;
+    }
 
     //used for task sorting & filtering in the Main.java
-    static public ArrayList<Task> taskSortFilter(String sort,Boolean ascending, String[][] filter, ArrayList<Task> original) {
+    static public ArrayList<Task> taskSortFilter(String sort,Boolean ascending, Boolean showDone,String[][] filter, ArrayList<Task> original) {
         ArrayList<Task> newTasks = TaskManager.cloneTasks(original);
         //index 0: alpha, 1: day, 2: priority
         //inside array:
@@ -337,7 +346,12 @@ public class TaskManager {
         //1. Sort
         newTasks = TaskManager.sort(newTasks,sort,ascending);
 
-        //2. Filters
+        //2. showDone
+        if (!showDone) {
+            newTasks = TaskManager.removeDone(newTasks);
+        }
+
+        //3. Filters
         if (!filter[0][0].equals("") && !filter[0][1].equals("")) {
             newTasks = TaskManager.filterByAlpha(newTasks, filter[0][1], Integer.parseInt(filter[0][0]));
         }
