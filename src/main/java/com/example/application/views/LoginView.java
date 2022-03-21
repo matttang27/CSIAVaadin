@@ -55,8 +55,7 @@ public class LoginView extends VerticalLayout {
 
             }
             else {
-                Notification notif = new Notification();
-                notif.show("Login failed");
+                Notification notif = Notification.show("Login failed");
                 listener.getSource().setEnabled(true);
             }
             

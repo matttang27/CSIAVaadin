@@ -4,8 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 
 public class StatManager {
-    private HashMap<LocalDate,DayStat> streak;
-    
+    private HashMap<LocalDate,DayStat> data;
     StatManager() {
 
     }
