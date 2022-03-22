@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- Project from https://start.vaadin.com/ -->
     <groupId>com.example.application</groupId>
@@ -12,6 +11,7 @@
     <properties>
         <java.version>11</java.version>
         <vaadin.version>14.8.4</vaadin.version>
+        <start-class>com.example.application</start-class>
     </properties>
 
     <parent>
@@ -54,7 +54,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-        
+
     </pluginRepositories>
 
     <dependencyManagement>
@@ -220,6 +220,34 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <!-- Use the latest released version:
+                https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
+                <version>1.8.0</version>
+
+                <executions>
+                    <execution>
+                        <!-- optional: you don't really need execution ids, but it looks nice in your build log. -->
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <!-- optional: default phase is "generate-resources" -->
+                        <phase>generate-resources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <nodeVersion>v10.16.2</nodeVersion>
+
+                    <!-- optional: with node version greater than 4.0.0 will use npm provided by node distribution -->
+                    <!--                    <npmVersion>2.15.9</npmVersion>-->
+
+                    <!-- optional: where to download node and npm from. Defaults to https://nodejs.org/dist/ -->
+                    <!--                    <downloadRoot>http://myproxy.example.org/nodejs/</downloadRoot>-->
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -236,6 +264,7 @@
                         <executions>
                             <execution>
                                 <goals>
+                                    <goal>prepare-frontend</goal>
                                     <goal>build-frontend</goal>
                                 </goals>
                                 <phase>compile</phase>
@@ -243,6 +272,17 @@
                         </executions>
                         <configuration>
                             <productionMode>true</productionMode>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.heroku.sdk</groupId>
+                        <artifactId>heroku-maven-plugin</artifactId>
+                        <version>2.0.13</version>
+                        <configuration>
+                            <appName>matttang27-vaadin-heroku</appName>
+                            <processTypes>
+                                <web>java $JAVA_OPTS -jar target/flowcrmtutorial-1.0-SNAPSHOT.jar --server.port=$PORT</web>
+                            </processTypes>
                         </configuration>
                     </plugin>
                 </plugins>
