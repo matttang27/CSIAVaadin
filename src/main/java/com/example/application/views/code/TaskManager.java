@@ -62,6 +62,7 @@ public class TaskManager {
         }
         return -1;
     }
+    
 
     public Task getTask(int id) {
         for (int i=0;i<tasks.size();i++) {
@@ -241,6 +242,9 @@ public class TaskManager {
                 else if (sortType == "created") {
                     greater = tasks.get(j).getCreated().compareTo(tasks.get(j+1).getCreated()) > 0;
                 }
+                else if (sortType == "estimatedTime") {
+                    greater = tasks.get(j).getEstimatedTime() > tasks.get(j+1).getEstimatedTime();
+                }
                 else {
                     System.out.println("sortType was not one of the specified sortTypes");
                 }
@@ -296,25 +300,6 @@ public class TaskManager {
             output += String.format("%s - Due: %s - Done: %s - Priority: %d\n", t.getName(), t.getNextDue(), t.getDone(), t.getPriority());
         }
         return output;
-    }
-    //use when you need to choose a task with user input (numbers) - TEXT BASED ONLY
-    static public Task chooseTask(Scanner input,ArrayList<Task> tasks) {
-        //hopefully matthew checks for this... but just in case
-        if (tasks.size() == 0) {
-            return null;
-        }
-        String output = "";
-        for (int i = 0; i < tasks.size(); i++) {
-            Task t = tasks.get(i);
-            output += String.format("%d) %s - Due: %s - Done: %s - Priority: %d\n", i+1, t.getName(), t.getNextDue(), t.getDone(), t.getPriority());
-        }
-        System.out.println(output);
-        System.out.println("Select a task using the numbers.");
-        //oh god is this even allowed
-        int a = Main.intInput(input,tasks.size());
-        return tasks.get(a-1);
-
-        
     }
 
     //creates a deep copy (i think that's the term?) of the tasks

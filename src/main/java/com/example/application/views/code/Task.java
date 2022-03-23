@@ -1,5 +1,6 @@
 package com.example.application.views.code;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.awt.Color;
 import java.time.Instant;
@@ -26,6 +27,7 @@ public class Task {
     private String notes;
     private int id;
     private int weight;
+    private int estimatedTime;
     private ArrayList<Task> children;
     //originally Group / Task, may change it to entry / task
     private String type;
@@ -34,12 +36,13 @@ public class Task {
 
     //Why do i have 3 constructors? ... that's a good question.
 
-    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime start, LocalDateTime nextDue, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String notes, int id, ArrayList<Task> children, String type, Entry entry, Group group) {
+    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime start, LocalDateTime nextDue, Group group, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String notes, int id, int weight, int estimatedTime, ArrayList<Task> children, String type, Entry entry) {
         this.name = name;
         this.created = created;
         this.lastEdited = lastEdited;
         this.start = start;
         this.nextDue = nextDue;
+        this.group = group;
         this.cronJob = cronJob;
         this.priority = priority;
         this.done = done;
@@ -49,11 +52,14 @@ public class Task {
         this.parent = parent;
         this.notes = notes;
         this.id = id;
+        this.weight = weight;
+        this.estimatedTime = estimatedTime;
         this.children = children;
         this.type = type;
         this.entry = entry;
-        this.group = group;
     }
+
+
     
     public Task() {
         name="Blank Task";
@@ -69,10 +75,11 @@ public class Task {
         start = LocalDateTime.now();
     }
     //creation from Add Task Button
-    public Task(String name,LocalDateTime due,int priority,Group group) {
+    public Task(String name,LocalDateTime due,int priority,int estimatedTime,Group group) {
         this.name = name;
         this.nextDue = due;
         this.priority = priority;
+        this.estimatedTime = estimatedTime;
         this.group = group;
         color=null;
         background="";
@@ -84,6 +91,26 @@ public class Task {
         done = false;
         children = new ArrayList<Task>();
         type = "task";
+    }
+
+    public int daysTillDue() {
+        LocalDate taskDay = this.nextDue.toLocalDate();
+        int dayDiff = (int) ChronoUnit.DAYS.between(LocalDate.now(), taskDay);
+        return dayDiff;
+    }
+
+    public double calculateScore(double a,double b,double c) {
+        //currently, the calculation is as follows:
+        //Average of Urgency, Priority and Time
+        //Urgency: 100-(a^(u-5)), where u is the # days until the task is due
+        //Priority: 10*(p^b), where p is the priority from 0-10.
+        //Time: 80*(1/(1+(1.1^((t*c)-50))))+20, where t is the estimated time in minutes.
+        //a,b,c are constants determined by the user in their settings.
+        //graphs can be seen at https://www.desmos.com/calculator/tnvc1utf5q
+        double urgency = 100-(Math.pow(a,((double) this.daysTillDue()-5)));
+        double priority = 10*Math.pow(this.priority,b);
+        double time = 80*(1/(1+Math.pow(1.1,(this.estimatedTime*c)-50))) + 20;
+        return (urgency+priority+time) / 3;
     }
 
     public Group getGroup() {
@@ -98,6 +125,22 @@ public class Task {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getWeight() {
+        return this.weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public int getEstimatedTime() {
+        return this.estimatedTime;
+    }
+
+    public void setEstimatedTime(int estimatedTime) {
+        this.estimatedTime = estimatedTime;
     }
 
     public LocalDateTime getCreated() {
@@ -273,9 +316,13 @@ public class Task {
         this.type = type;
     }
 
+    
+
     public Task clone(){ 
         //thank god for vscode
-        return new Task(name, created, lastEdited, start, nextDue, cronJob, priority, done, color, background, icon, parent, notes, id, children, type,entry,group);
+
+    
+        return new Task(name, created, lastEdited, start, nextDue, group, cronJob, priority, done, color, background, icon, parent, notes, id, weight, estimatedTime, children, type, entry);
     }
 
 }

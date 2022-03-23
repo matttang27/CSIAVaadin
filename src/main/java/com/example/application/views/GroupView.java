@@ -265,7 +265,7 @@ public class GroupView extends VerticalLayout {
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.setValue(group.getColor());
         
-        H2 title = new H2(group.getName());
+        H1 title = new H1(group.getName());
 
         ComboBox<Icon> selectIcon = new ComboBox<>();
         selectIcon.setItemLabelGenerator(i -> {
@@ -320,6 +320,9 @@ public class GroupView extends VerticalLayout {
 
         VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,selectIcon),colorPicker,goalField,additionalInfo);
 
+        Divider divider = new Divider();
+        divider.getStyle().set("background-color",group.getColor());
+        HorizontalLayout finalLayout = new HorizontalLayout(title,divider,fieldLayout);
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         Button saveButton = new Button("Save", e -> {
             //checks whether any of the fields are empty, if true, sends a notification and cancels
@@ -357,7 +360,7 @@ public class GroupView extends VerticalLayout {
 
         HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton,saveButton);
         
-        VerticalLayout dialogLayout = new VerticalLayout(title,fieldLayout,buttonLayout);
+        VerticalLayout dialogLayout = new VerticalLayout(finalLayout,buttonLayout);
 
         
         return dialogLayout;

@@ -13,6 +13,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
@@ -122,7 +123,7 @@ public class TaskView extends VerticalLayout {
         RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
 
 
-        selectSort.setItems("Task Name","Priority","Due Date","Time Created","Group Name");
+        selectSort.setItems("Task Name","Priority","Due Date","Time Created","Group Name","Estimated Time");
         selectSort.setValue("Task Name");
         selectSort.addValueChangeListener(e -> {
             switch (e.getValue()) {
@@ -141,6 +142,8 @@ public class TaskView extends VerticalLayout {
                 case "Group Name":
                     sortType = "groupName";
                     break;
+                case "Estimated Time":
+                    sortType = "estimatedTime";
             }
             updateGrid();
         });
@@ -190,8 +193,14 @@ public class TaskView extends VerticalLayout {
         
         grid.addColumn(Task::getName).setHeader("Name").setKey("name");
         //DONE: Change getNextDue format (preferably without an entire new function)
-        grid.addColumn(Task::getNextDueString).setHeader("Due").setKey("due");
+        grid.addColumn(t -> {
+            return t.getNextDue().format(defDTFormat);
+        }).setHeader("Due").setKey("due");
         grid.addColumn(Task::getPriority).setHeader("Priority").setKey("priority");
+        grid.addColumn(t -> {
+            System.out.println(t.getEstimatedTime());
+            return t.getEstimatedTime();
+        }).setHeader("Estimated Time").setKey("estimatedTime");
         grid.addComponentColumn(
 
         task -> {
@@ -312,12 +321,17 @@ public class TaskView extends VerticalLayout {
         NumberField priorityField = new NumberField("Priority (1-10)");
         priorityField.setRequiredIndicatorVisible(true);
         priorityField.setErrorMessage("This field is required");
+        priorityField.setValue(1.0);
+        NumberField timeField = new NumberField("Estimated Minutes");
+        timeField.setRequiredIndicatorVisible(true);
+        timeField.setErrorMessage("This field is required");
+        timeField.setValue(15.0);
         Select<String> groupField = new Select<>();
         groupField.setLabel("Group");
         groupField.setItems(groupManager.getGroupNames());
         groupField.setEmptySelectionAllowed(true);
 
-        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,groupField),dueField,priorityField);
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,groupField),dueField,new HorizontalLayout(priorityField,timeField))  ;
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         Button saveButton = new Button("Add", e -> {
@@ -327,7 +341,10 @@ public class TaskView extends VerticalLayout {
                 error = "Fill in all required fields";
             }
             else if (priorityField.getValue().intValue() > 10 || priorityField.getValue().intValue() < 1) {
-                error = "Priority not in range";
+                error = "Priority not in range (1-10)";
+            }
+            else if (timeField.getValue().intValue() < 0) {
+                error = "Estimated Time cannot be negative";
             }
 
             if (!error.equals("")) {
@@ -337,7 +354,8 @@ public class TaskView extends VerticalLayout {
                 return;
             }
             
-            Task newTask = new Task(nameField.getValue(),dueField.getValue(), priorityField.getValue().intValue(),groupManager.findByName(groupField.getValue()));
+            Task newTask = new Task(nameField.getValue(),dueField.getValue(), priorityField.getValue().intValue(),timeField.getValue().intValue(),groupManager.findByName(groupField.getValue()));
+            newTask.setEstimatedTime(timeField.getValue().intValue());
             newTask.setLastEdited(LocalDateTime.now());
             taskManager.addTask(newTask);
             
@@ -362,7 +380,7 @@ public class TaskView extends VerticalLayout {
     }
 
     private VerticalLayout viewItemLayout(Dialog dialog,Grid grid,Task selectTask) {
-        H2 title = new H2(selectTask.getName());
+        H1 title = new H1(selectTask.getName());
 
         TextField nameField = new TextField("Task Name");
         nameField.setValue(selectTask.getName());
@@ -381,6 +399,10 @@ public class TaskView extends VerticalLayout {
         priorityField.setValue((double) selectTask.getPriority());
         priorityField.setRequiredIndicatorVisible(true);
         priorityField.setErrorMessage("This field is required");
+        NumberField timeField = new NumberField("Estimated Minutes");
+        timeField.setRequiredIndicatorVisible(true);
+        timeField.setErrorMessage("This field is required");
+        timeField.setValue((double) selectTask.getEstimatedTime());
         TextField createdField = new TextField("Date created");
         createdField.setReadOnly(true);
         createdField.setValue(selectTask.getCreated().format(defDTFormat));
@@ -397,8 +419,14 @@ public class TaskView extends VerticalLayout {
         Details additionalInfo = new Details("Additional Information",additionalLayout);
         additionalInfo.setOpened(false);
 
-        VerticalLayout fieldLayout = new VerticalLayout(title,new HorizontalLayout(nameField,groupField),dueField,priorityField,additionalInfo);
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,groupField),dueField,new HorizontalLayout(priorityField,timeField),additionalInfo);
 
+        Divider divider = new Divider();
+        if (selectTask.getGroup() != null) {
+            divider.getStyle().set("background-color",selectTask.getGroup().getColor());
+        }
+        
+        HorizontalLayout finalLayout = new HorizontalLayout(title,divider,fieldLayout);
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         selectTask.setName("TEST");
         Button saveButton = new Button("Save", e -> {
@@ -409,6 +437,9 @@ public class TaskView extends VerticalLayout {
             }
             else if (priorityField.getValue().intValue() > 10 || priorityField.getValue().intValue() < 1) {
                 error = "Priority not in range";
+            }
+            else if (timeField.getValue().intValue() < 0) {
+                error = "Estimated Time cannot be negative";
             }
 
             if (!error.equals("")) {
@@ -422,6 +453,7 @@ public class TaskView extends VerticalLayout {
             selectTask.setNextDue(dueField.getValue());
             selectTask.setStart(dueField.getValue().withHour(0).withMinute(0).withSecond(1));
             selectTask.setPriority(priorityField.getValue().intValue());
+            selectTask.setEstimatedTime(timeField.getValue().intValue());
             selectTask.setLastEdited(LocalDateTime.now());
             selectTask.setNotes(notesField.getValue());
             selectTask.setGroup(groupManager.findByName(groupField.getValue()));
@@ -450,7 +482,7 @@ public class TaskView extends VerticalLayout {
 
         HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton,saveButton);
         
-        VerticalLayout dialogLayout = new VerticalLayout(fieldLayout,buttonLayout);
+        VerticalLayout dialogLayout = new VerticalLayout(finalLayout,buttonLayout);
 
         
         return dialogLayout;
