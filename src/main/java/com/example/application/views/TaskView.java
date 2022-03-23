@@ -88,22 +88,7 @@ public class TaskView extends VerticalLayout {
         // PaperSlider slider2 = new PaperSlider();
         // add(slider2);
 
-        Tabs tabs = new Tabs(new Tab("Tasks"),new Tab("Groups"), new Tab("Schedule"),new Tab("Statistics"),new Tab("Tools"));
-        tabs.addSelectedChangeListener(listener -> {
-            Tab tab = listener.getSelectedTab();
-            String tabName = tab.getLabel();
-            if (tabName.equals("Groups")) {
-                tabs.getUI().ifPresent(ui -> {
-                    Component c = ui.getCurrent();
-                    ComponentUtil.setData(c,"manager",manager);
-                    ui.navigate("groups");
-                });
-            }
-        });
-
-        tabs.setOrientation(Tabs.Orientation.HORIZONTAL);
-        tabs.setWidth("100%");
-        tabs.addThemeVariants(TabsVariant.LUMO_EQUAL_WIDTH_TABS);
+        Tabs tabs = new NavTab(manager,"Tasks");
         add(new VerticalLayout(tabs));
         
 

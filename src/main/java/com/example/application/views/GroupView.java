@@ -69,23 +69,8 @@ public class GroupView extends VerticalLayout {
         
         
         
-        Tab thisTab = new Tab("Groups");
-        Tabs tabs = new Tabs(new Tab("Tasks"),thisTab, new Tab("Schedule"),new Tab("Statistics"),new Tab("Tools"));
-        tabs.addSelectedChangeListener(listener -> {
-            Tab tab = listener.getSelectedTab();
-            String tabName = tab.getLabel();
-            if (tabName.equals("Tasks")) {
-                tabs.getUI().ifPresent(ui -> {
-                    Component c = ui.getCurrent();
-                    ComponentUtil.setData(c,"manager",manager);
-                    ui.navigate("tasks");
-                });
-            }
-        });
-        tabs.setSelectedTab(thisTab);
-        tabs.setOrientation(Tabs.Orientation.HORIZONTAL);
-        tabs.setWidth("100%");
-        tabs.addThemeVariants(TabsVariant.LUMO_EQUAL_WIDTH_TABS);
+        
+        Tabs tabs = new NavTab(manager,"Groups");
         add(new VerticalLayout(tabs));
         
 
