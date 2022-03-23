@@ -217,12 +217,18 @@ public class TaskManager {
      */
 
 
-    static ArrayList<Task> sort(ArrayList<Task> tasks, String sortType, Boolean ascending) {
+    ArrayList<Task> sort(ArrayList<Task> tasks, String sortType, Boolean ascending) {
         ArrayList<Task> sorted = tasks;
 
 
         //uses bubble sort
         boolean flag = false;
+
+        //for taskScore only
+        SettingsManager settings = this.manager.getSettings();
+        double a = settings.getScoreA();
+        double b = settings.getScoreB();
+        double c = settings.getScoreC();
 
         for (int i=0;i<tasks.size()-1;i++) {
             flag = false;
@@ -244,6 +250,10 @@ public class TaskManager {
                 }
                 else if (sortType == "estimatedTime") {
                     greater = tasks.get(j).getEstimatedTime() > tasks.get(j+1).getEstimatedTime();
+                }
+                else if (sortType == "taskScore") {
+                    
+                    greater = tasks.get(j).calculateScore(a,b,c) > tasks.get(j+1).calculateScore(a,b,c);
                 }
                 else {
                     System.out.println("sortType was not one of the specified sortTypes");
@@ -318,7 +328,7 @@ public class TaskManager {
         }
         return a;
     }
-    static public ArrayList<Task> removeDone(ArrayList<Task> tasks) {
+    public ArrayList<Task> removeDone(ArrayList<Task> tasks) {
         ArrayList<Task> a = new ArrayList<Task>();
         for (Task t: tasks) {
             if (!t.getDone()) {
@@ -329,7 +339,7 @@ public class TaskManager {
     }
 
     //used for task sorting & filtering in the Main.java
-    static public ArrayList<Task> taskSortFilter(String sort,Boolean ascending, Boolean showDone,String[][] filter, ArrayList<Task> original) {
+    public ArrayList<Task> taskSortFilter(String sort,Boolean ascending, Boolean showDone,String[][] filter, ArrayList<Task> original) {
         ArrayList<Task> newTasks = TaskManager.cloneTasks(original);
         //index 0: alpha, 1: day, 2: priority
         //inside array:
@@ -337,11 +347,11 @@ public class TaskManager {
         //index 1: actual value
 
         //1. Sort
-        newTasks = TaskManager.sort(newTasks,sort,ascending);
+        newTasks = this.sort(newTasks,sort,ascending);
 
         //2. showDone
         if (!showDone) {
-            newTasks = TaskManager.removeDone(newTasks);
+            newTasks = this.removeDone(newTasks);
         }
 
         //3. Filters
