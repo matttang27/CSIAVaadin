@@ -24,6 +24,12 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
+
+import org.vaadin.stefan.fullcalendar.CalendarView;
+import org.vaadin.stefan.fullcalendar.FullCalendar;
+import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
+import org.vaadin.stefan.fullcalendar.SchedulerView;
+
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.details.Details;
@@ -38,6 +44,7 @@ public class ScheduleView extends VerticalLayout {
     private GroupManager groupManager;
     private StatManager statManager;
     private User user;
+    private FullCalendar calendar;
     public ScheduleView() {
 
         //import data
@@ -56,6 +63,9 @@ public class ScheduleView extends VerticalLayout {
         NavTab tabs = new NavTab(manager,"Schedule");
         add(new VerticalLayout(tabs));
         
+        calendar = FullCalendarBuilder.create().withScheduler().build();
+        calendar.changeView(SchedulerView.TIMELINE_DAY);
+        add(calendar);
         
 
     }

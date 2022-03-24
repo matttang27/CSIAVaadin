@@ -8,6 +8,8 @@
     "@fullcalendar/list": "5.10.1",
     "@fullcalendar/moment": "5.10.1",
     "@fullcalendar/moment-timezone": "5.10.1",
+    "@fullcalendar/resource-timegrid": "5.10.1",
+    "@fullcalendar/resource-timeline": "5.10.1",
     "@fullcalendar/timegrid": "5.10.1",
     "@polymer/iron-a11y-announcer": "3.0.2",
     "@polymer/iron-a11y-keys-behavior": "3.0.1",
@@ -108,6 +110,8 @@
       "@fullcalendar/list": "5.10.1",
       "@fullcalendar/moment": "5.10.1",
       "@fullcalendar/moment-timezone": "5.10.1",
+      "@fullcalendar/resource-timegrid": "5.10.1",
+      "@fullcalendar/resource-timeline": "5.10.1",
       "@fullcalendar/timegrid": "5.10.1",
       "@polymer/iron-a11y-announcer": "3.0.2",
       "@polymer/iron-a11y-keys-behavior": "3.0.1",
@@ -200,6 +204,6 @@
       "webpack-dev-server": "3.11.0",
       "webpack-merge": "4.2.2"
     },
-    "hash": "c6a3a10a5798d5cc9200eebb8a2d0032dd25a9488d8bb0fa44980d3a053d62f3"
+    "hash": "45134f677271c17ff7941a2a387f3ff05c003dd10bac180e9ae09f4e92f0ebe2"
   }
 }

@@ -9,6 +9,7 @@ import '@vaadin/flow-frontend/date-picker-datefns.js';
 import '@vaadin/flow-frontend/datepickerConnector.js';
 import '@vaadin/flow-frontend/dndConnector-es6.js';
 import '@vaadin/flow-frontend/flow-component-renderer.js';
+import '@vaadin/flow-frontend/full-calendar-scheduler.js';
 import '@vaadin/flow-frontend/full-calendar.js';
 import '@vaadin/flow-frontend/gridConnector-es6.js';
 import '@vaadin/flow-frontend/gridProConnector.js';
