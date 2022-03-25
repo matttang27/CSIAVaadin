@@ -9,6 +9,16 @@ public class Manager {
     StatManager stater;
     User user;
     StatManager stats;
+    SettingsManager settings;
+
+
+    public SettingsManager getSettings() {
+        return this.settings;
+    }
+
+    public void setSettings(SettingsManager settings) {
+        this.settings = settings;
+    }
 
     public GroupManager getGrouper() {
         return this.grouper;
@@ -31,6 +41,7 @@ public class Manager {
         grouper = new GroupManager(this);
         stater = new StatManager(this);
         schedule = new ArrayList<Schedule>();
+        settings = new SettingsManager(this);
     }
 
     public User getUser() {

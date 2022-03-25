@@ -61,6 +61,8 @@ public class TaskView extends VerticalLayout {
     private Manager manager;
     private TaskManager taskManager;
     private GroupManager groupManager;
+    private StatManager statManager;
+    private SettingsManager settingsManager;
     private FullCalendar calendar;
     private Grid<Task> grid;
     private String sortType = "taskName";
@@ -108,7 +110,8 @@ public class TaskView extends VerticalLayout {
         user = manager.getUser();
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
-
+        statManager = manager.getStater();
+        settingsManager = manager.getSettings();
 
 
 
@@ -123,7 +126,7 @@ public class TaskView extends VerticalLayout {
         RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
 
 
-        selectSort.setItems("Task Name","Priority","Due Date","Time Created","Group Name","Estimated Time");
+        selectSort.setItems("Task Name","Priority","Due Date","Time Created","Group Name","Estimated Time","Task Score");
         selectSort.setValue("Task Name");
         selectSort.addValueChangeListener(e -> {
             switch (e.getValue()) {
@@ -144,6 +147,8 @@ public class TaskView extends VerticalLayout {
                     break;
                 case "Estimated Time":
                     sortType = "estimatedTime";
+                case "Task Score":
+                    sortType = "taskScore";
             }
             updateGrid();
         });
@@ -227,6 +232,11 @@ public class TaskView extends VerticalLayout {
             
         }
         ).setHeader("Group").setKey("group");
+        grid.addColumn(t -> {
+            double score = t.calculateScore(settingsManager.getScoreA(), settingsManager.getScoreB(), settingsManager.getScoreC());
+            score = Math.round(score*100.0)/100.0;
+            return score;
+        }).setHeader("Task Score").setKey("score");
         grid.setColumnReorderingAllowed(true);
 
 
@@ -492,7 +502,7 @@ public class TaskView extends VerticalLayout {
     private void updateGrid() {
         ArrayList<Task> tasks = taskManager.getTasks();
         
-        tasks = TaskManager.taskSortFilter(sortType,ascending,showDoneB,filter,tasks);
+        tasks = taskManager.taskSortFilter(sortType,ascending,showDoneB,filter,tasks);
         grid.setItems(tasks);
     }
 
