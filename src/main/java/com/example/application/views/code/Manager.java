@@ -32,8 +32,9 @@ public class Manager {
         return this.scheduler;
     }
 
-    public void setSchedule(ScheduleManager schedule) {
+    public void setSchedule(ScheduleManager scheduler) {
         this.scheduler = scheduler;
+        
     }
     public Manager() {
         tasker = new TaskManager(this);

@@ -11,6 +11,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
@@ -19,6 +20,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -64,11 +66,28 @@ public class ScheduleView extends VerticalLayout {
 
         NavTab tabs = new NavTab(manager,"Schedule");
         add(new VerticalLayout(tabs));
+
+        Dialog addTaskDialog = new Dialog();
         
-        Grid<Event> grid = new Grid<Event>();
+        Button addTaskButton = new Button("Add Task",e -> addTaskDialog.open());
+
+        Dialog addEventDialog = new Dialog();
+        Button addEventButton = new Button("Add Event",e -> addEventDialog.open());
+
+        add(new HorizontalLayout(addTaskButton,addEventButton));
+        
+        Grid<Event> grid = new Grid<>(Event.class,false);
         
         add(grid);
         
 
+    }
+
+    private Dialog addTaskLayout(Dialog dialog) {
+        H1 title = new H1();
+        Select select = new Select();
+
+
+        return dialog;
     }
 }

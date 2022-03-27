@@ -38,7 +38,7 @@ public class LoginView extends VerticalLayout {
         LoginForm loginForm = new LoginForm();
         add(loginForm);
         loginForm.addLoginListener(listener -> {
-            System.out.println(listener);
+            
             String u = listener.getUsername();
             String p = listener.getPassword();
 

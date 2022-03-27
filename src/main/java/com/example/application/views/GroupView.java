@@ -70,8 +70,7 @@ public class GroupView extends VerticalLayout {
         
         
         
-        Tabs tabs = new NavTab(manager,"Groups");
-        add(new VerticalLayout(tabs));
+        
         
 
         //import data
@@ -81,6 +80,9 @@ public class GroupView extends VerticalLayout {
             manager = new Manager();
             manager.setUser(new User("Matthew"));
         }
+
+        Tabs tabs = new NavTab(manager,"Groups");
+        add(new VerticalLayout(tabs));
 
         user = manager.getUser();
         taskManager = manager.getTasker();

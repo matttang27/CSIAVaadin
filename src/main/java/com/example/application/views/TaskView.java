@@ -91,9 +91,7 @@ public class TaskView extends VerticalLayout {
         // PaperSlider slider2 = new PaperSlider();
         // add(slider2);
 
-        Tabs tabs = new NavTab(manager,"Tasks");
-        add(new VerticalLayout(tabs));
-        
+
 
         //import data
         Component c = UI.getCurrent();
@@ -114,7 +112,10 @@ public class TaskView extends VerticalLayout {
         settingsManager = manager.getSettings();
 
 
+        Tabs tabs = new NavTab(manager,"Tasks");
+        add(new VerticalLayout(tabs));
 
+        
         Dialog addDialog = new Dialog();
         
         Button addButton = new Button("Add Task",e -> addDialog.open());

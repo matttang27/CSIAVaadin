@@ -107,6 +107,9 @@ public class Task {
         //Time: 80*(1/(1+(1.1^((t*c)-50))))+20, where t is the estimated time in minutes.
         //a,b,c are constants determined by the user in their settings.
         //graphs can be seen at https://www.desmos.com/calculator/chyzuxo5yo
+        if (this.isDone()) {
+            return 0;
+        }
         double urgency = 100-(Math.pow(a,((double) this.daysTillDue()-5)));
         double priority = 10*Math.pow(this.priority,b);
         double time = 80*(1/(1+Math.pow(1.1,(this.estimatedTime*c)-50))) + 20;
