@@ -45,6 +45,7 @@ public class ScheduleView extends VerticalLayout {
     private StatManager statManager;
     private User user;
     private FullCalendar calendar;
+    private ScheduleManager scheduler;
     public ScheduleView() {
 
         //import data
@@ -59,13 +60,14 @@ public class ScheduleView extends VerticalLayout {
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
         statManager = manager.getStater();
+        scheduler = manager.getScheduler();
 
         NavTab tabs = new NavTab(manager,"Schedule");
         add(new VerticalLayout(tabs));
         
-        calendar = FullCalendarBuilder.create().withScheduler().build();
-        calendar.changeView(SchedulerView.TIMELINE_DAY);
-        add(calendar);
+        Grid<Event> grid = new Grid<Event>();
+        
+        add(grid);
         
 
     }

@@ -4,13 +4,13 @@ public class Manager {
 
 
     //currently this is so that everything can be connected to one spot, but not sure if I really need that
-    TaskManager tasker;
-    GroupManager grouper;
-    StatManager stater;
-    User user;
-    StatManager stats;
-    SettingsManager settings;
-
+    private TaskManager tasker;
+    private GroupManager grouper;
+    private StatManager stater;
+    private User user;
+    private StatManager stats;
+    private SettingsManager settings;
+    private ScheduleManager scheduler;
 
     public SettingsManager getSettings() {
         return this.settings;
@@ -28,19 +28,18 @@ public class Manager {
         this.grouper = grouper;
     }
 
-    public ArrayList<Schedule> getSchedule() {
-        return this.schedule;
+    public ScheduleManager getScheduler() {
+        return this.scheduler;
     }
 
-    public void setSchedule(ArrayList<Schedule> schedule) {
-        this.schedule = schedule;
+    public void setSchedule(ScheduleManager schedule) {
+        this.scheduler = scheduler;
     }
-    ArrayList<Schedule> schedule;
     public Manager() {
         tasker = new TaskManager(this);
         grouper = new GroupManager(this);
         stater = new StatManager(this);
-        schedule = new ArrayList<Schedule>();
+        scheduler = new ScheduleManager(this);
         settings = new SettingsManager(this);
     }
 

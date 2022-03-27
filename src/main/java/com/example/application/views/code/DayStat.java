@@ -4,8 +4,17 @@ import java.time.LocalDate;
 
 public class DayStat {
     private LocalDate day;
+    private DaySchedule daySchedule;
     private int tasksCompleted = 0;
     private int tasksCreated = 0;
+
+    public DaySchedule getDaySchedule() {
+        return this.daySchedule;
+    }
+
+    public void setDaySchedule(DaySchedule daySchedule) {
+        this.daySchedule = daySchedule;
+    }
 
 
     public DayStat(LocalDate day) {
