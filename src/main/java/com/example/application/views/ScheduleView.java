@@ -70,7 +70,7 @@ public class ScheduleView extends VerticalLayout {
         Dialog addTaskDialog = new Dialog();
         
         Button addTaskButton = new Button("Add Task",e -> addTaskDialog.open());
-
+        addTaskDialog.add(addTaskLayout(addTaskDialog));
         Dialog addEventDialog = new Dialog();
         Button addEventButton = new Button("Add Event",e -> addEventDialog.open());
 
@@ -83,12 +83,18 @@ public class ScheduleView extends VerticalLayout {
 
     }
 
-    private Dialog addTaskLayout(Dialog dialog) {
-        H1 title = new H1();
-        Grid<Task> addTaskGrid = new Grid(Task.class,false);
+    private HorizontalLayout addTaskLayout(Dialog dialog) {
+        dialog.setWidth("50%");
+        H1 title = new H1("Add a task:");
+        Grid<Task> grid = new Grid(Task.class,false);
+        TaskGrid taskGrid = new TaskGrid(grid,manager,null);
+        taskGrid.addContextMenu();
+        taskGrid.setSortType("taskScore");
+        taskGrid.setAscending(false);
+        taskGrid.updateGrid();
         
 
+        return new HorizontalLayout(title,new Divider(),grid);
 
-        return dialog;
     }
 }

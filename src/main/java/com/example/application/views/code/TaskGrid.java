@@ -44,7 +44,14 @@ public class TaskGrid {
     private String viewMode = "grid";
     private boolean ascending = true;
     private boolean showDoneB = false;
-    private String[][] filter = { { "", "" }, { "", "" }, { "", "" }, { "", "" } };
+    private HashMap<String,Object[]> filter = new HashMap<String,Object[]>() {{
+        put("taskName",new Object[]{"",null});
+        put("day",new Object[]{"",null});
+        put("priority",new Object[]{"",null});
+        put("created",new Object[]{"",null});
+        put("estimatedTime",new Object[]{"",null});
+        put("taskScore",new Object[]{"",null});
+    }};
 
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -124,41 +131,50 @@ public class TaskGrid {
             score = Math.round(score * 100.0) / 100.0;
             return score;
         }).setHeader("Task Score").setKey("score");
+        grid.setItems(taskManager.getTasks());
     }
+
     public void updateGrid() {
         TaskManager taskManager = manager.getTasker();
         ArrayList<Task> tasks = taskManager.getTasks();
-        
-        tasks = taskManager.taskSortFilter(sortType,ascending,showDoneB,filter,tasks);
+
+        tasks = taskManager.taskSortFilter(sortType, ascending, new Boolean[]{showDoneB}, filter, tasks);
         grid.setItems(tasks);
     }
+
     public void addContextMenu() {
         GridContextMenu<Task> menu = grid.addContextMenu();
         menu.addItem("View", event -> {
-            //exits if the user selected empty space
-            if (event.getItem() == null) {return;}
+            // exits if the user selected empty space
+            if (event.getItem() == null) {
+                return;
+            }
             Task selectedTask = event.getItem().get();
-            //we need to get the taskManager task, not the grid task
+            // we need to get the taskManager task, not the grid task
             selectedTask = manager.getTasker().getTask(selectedTask.getId());
             Dialog itemDialog = new Dialog();
-            itemDialog.add(viewItemLayout(itemDialog,grid,selectedTask));
+            itemDialog.add(viewItemLayout(itemDialog, grid, selectedTask));
             itemDialog.open();
         });
 
         menu.addItem("Delete", event -> {
             Task selectedTask = event.getItem().get();
-            
+
             manager.getTasker().removeTask(selectedTask);
             updateCalendar();
-            
+
             updateGrid();
-            
+
         });
     }
+
     public void updateCalendar() {
-        if (calendar == null) {return;};
+        if (calendar == null) {
+            return;
+        }
+        ;
         ArrayList<Task> tasks = manager.getTasker().getTasks();
-        
+
         calendar.removeAllEntries();
         tasks.forEach(newTask -> {
             Entry entry = new Entry();
@@ -169,57 +185,60 @@ public class TaskGrid {
             calendar.addEntry(entry);
             newTask.setEntry(entry);
         });
-        
+
     }
+
     public Button addTaskButton() {
         Dialog addDialog = new Dialog();
-        
-        Button addButton = new Button("Add Task",e -> addDialog.open());
-        addDialog.add(addTaskLayout(addDialog,grid));
+
+        Button addButton = new Button("Add Task", e -> addDialog.open());
+        addDialog.add(addTaskLayout(addDialog, grid));
         return addButton;
     }
+
     public HorizontalLayout addSorts() {
         Select<String> selectSort = new Select<>();
         RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
 
-
-        selectSort.setItems("Task Name","Priority","Due Date","Time Created","Group Name","Estimated Time","Task Score");
+        selectSort.setItems("Task Name", "Priority", "Due Date", "Time Created", "Group Name", "Estimated Time",
+                "Task Score");
         selectSort.setValue("Task Name");
         selectSort.addValueChangeListener(e -> {
-            HashMap<String,String> labelToSort = new HashMap<String,String>() {{
-                put("Task Name","taskName");
-                put("Priority","priorty");
-                put("Due Date","day");
-                put("Time Created","created");
-                put("Group Name","groupName");
-                put("Estimated Time","estimatedTime");
-                put("Task Score","taskScore");
-            }};
+            HashMap<String, String> labelToSort = new HashMap<String, String>() {
+                {
+                    put("Task Name", "taskName");
+                    put("Priority", "priorty");
+                    put("Due Date", "day");
+                    put("Time Created", "created");
+                    put("Group Name", "groupName");
+                    put("Estimated Time", "estimatedTime");
+                    put("Task Score", "taskScore");
+                }
+            };
             setSortType(labelToSort.get(e.getValue()));
             updateGrid();
         });
 
-        
-        radioGroup.setItems("Ascending","Descending");
+        radioGroup.setItems("Ascending", "Descending");
         radioGroup.setValue("Ascending");
         radioGroup.addValueChangeListener(e -> {
             setAscending(e.getValue().equals("Ascending"));
             updateGrid();
         });
-        
+
         Checkbox showDone = new Checkbox();
         showDone.setLabel("Show Done");
-        
+
         showDone.addClickListener(e -> {
             setShowDoneB(e.getSource().getValue());
             updateGrid();
         });
 
-        return new HorizontalLayout(selectSort,radioGroup,showDone);
+        return new HorizontalLayout(selectSort, radioGroup, showDone);
     }
-        
-    public VerticalLayout viewItemLayout(Dialog dialog,Grid<Task> grid,Task selectTask) {
-        
+
+    public VerticalLayout viewItemLayout(Dialog dialog, Grid<Task> grid, Task selectTask) {
+
         H1 title = new H1(selectTask.getName());
 
         TextField nameField = new TextField("Task Name");
@@ -249,37 +268,35 @@ public class TaskGrid {
         TextField editField = new TextField("Last edited");
         editField.setValue(selectTask.getLastEdited().format(defDTFormat));
         editField.setReadOnly(true);
-        
-
 
         TextArea notesField = new TextArea("Notes");
         notesField.setValue(selectTask.getNotes());
 
-        VerticalLayout additionalLayout = new VerticalLayout(new HorizontalLayout(createdField,editField),notesField);
+        VerticalLayout additionalLayout = new VerticalLayout(new HorizontalLayout(createdField, editField), notesField);
 
-        Details additionalInfo = new Details("Additional Information",additionalLayout);
+        Details additionalInfo = new Details("Additional Information", additionalLayout);
         additionalInfo.setOpened(false);
 
-        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,groupField),dueField,new HorizontalLayout(priorityField,timeField),additionalInfo);
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField, groupField), dueField,
+                new HorizontalLayout(priorityField, timeField), additionalInfo);
 
         Divider divider = new Divider();
         if (selectTask.getGroup() != null) {
-            divider.getStyle().set("background-color",selectTask.getGroup().getColor());
+            divider.getStyle().set("background-color", selectTask.getGroup().getColor());
         }
-        
-        HorizontalLayout finalLayout = new HorizontalLayout(title,divider,fieldLayout);
+
+        HorizontalLayout finalLayout = new HorizontalLayout(title, divider, fieldLayout);
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         selectTask.setName("TEST");
         Button saveButton = new Button("Save", e -> {
-            //checks whether any of the fields are empty, if true, sends a notification and cancels
+            // checks whether any of the fields are empty, if true, sends a notification and
+            // cancels
             String error = "";
             if (nameField.getValue() == null || dueField.getValue() == null || priorityField.getValue() == null) {
                 error = "Fill in all required fields";
-            }
-            else if (priorityField.getValue().intValue() > 10 || priorityField.getValue().intValue() < 1) {
+            } else if (priorityField.getValue().intValue() > 10 || priorityField.getValue().intValue() < 1) {
                 error = "Priority not in range";
-            }
-            else if (timeField.getValue().intValue() < 0) {
+            } else if (timeField.getValue().intValue() < 0) {
                 error = "Estimated Time cannot be negative";
             }
 
@@ -289,7 +306,7 @@ public class TaskGrid {
                 errorNotif.setDuration(2000);
                 return;
             }
-            
+
             selectTask.setName(nameField.getValue());
             selectTask.setNextDue(dueField.getValue());
             selectTask.setStart(dueField.getValue().withHour(0).withMinute(0).withSecond(1));
@@ -299,37 +316,34 @@ public class TaskGrid {
             selectTask.setNotes(notesField.getValue());
             selectTask.setGroup(groupManager.findByName(groupField.getValue()));
             System.out.println(selectTask);
-            
-            
 
             updateCalendar();
             updateGrid();
-            //TODO: ADD ENTRY CLICK LISTENERS TO CALENDAR
-            // ComponentEventListener<EntryClickedEvent> entryClick = new ComponentEventListener();
+            // TODO: ADD ENTRY CLICK LISTENERS TO CALENDAR
+            // ComponentEventListener<EntryClickedEvent> entryClick = new
+            // ComponentEventListener();
             // entryClick.onComponentEvent(e -> {
 
             // });
             // calendar.addEntryClickedListener(entryClick);
-            
-            
 
             Notification addTaskNotif = Notification.show("Task Updated!");
             addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             addTaskNotif.setDuration(2000);
             dialog.close();
-            
+
         });
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton,saveButton);
-        
-        VerticalLayout dialogLayout = new VerticalLayout(finalLayout,buttonLayout);
+        HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton, saveButton);
 
-        
+        VerticalLayout dialogLayout = new VerticalLayout(finalLayout, buttonLayout);
+
         return dialogLayout;
     }
-    public VerticalLayout addTaskLayout(Dialog dialog,Grid<Task> grid) {
-        
+
+    public VerticalLayout addTaskLayout(Dialog dialog, Grid<Task> grid) {
+
         H2 title = new H2("Add a new task");
 
         TextField nameField = new TextField("Task Name");
@@ -352,19 +366,19 @@ public class TaskGrid {
         groupField.setItems(groupManager.getGroupNames());
         groupField.setEmptySelectionAllowed(true);
 
-        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,groupField),dueField,new HorizontalLayout(priorityField,timeField))  ;
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField, groupField), dueField,
+                new HorizontalLayout(priorityField, timeField));
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         Button saveButton = new Button("Add", e -> {
-            //checks whether any of the fields are empty, if true, sends a notification and cancels
+            // checks whether any of the fields are empty, if true, sends a notification and
+            // cancels
             String error = "";
             if (nameField.getValue() == null || dueField.getValue() == null || priorityField.getValue() == null) {
                 error = "Fill in all required fields";
-            }
-            else if (priorityField.getValue().intValue() > 10 || priorityField.getValue().intValue() < 1) {
+            } else if (priorityField.getValue().intValue() > 10 || priorityField.getValue().intValue() < 1) {
                 error = "Priority not in range (1-10)";
-            }
-            else if (timeField.getValue().intValue() < 0) {
+            } else if (timeField.getValue().intValue() < 0) {
                 error = "Estimated Time cannot be negative";
             }
 
@@ -374,12 +388,12 @@ public class TaskGrid {
                 errorNotif.setDuration(2000);
                 return;
             }
-            
-            Task newTask = new Task(nameField.getValue(),dueField.getValue(), priorityField.getValue().intValue(),timeField.getValue().intValue(),groupManager.findByName(groupField.getValue()));
+
+            Task newTask = new Task(nameField.getValue(), dueField.getValue(), priorityField.getValue().intValue(),
+                    timeField.getValue().intValue(), groupManager.findByName(groupField.getValue()));
             newTask.setEstimatedTime(timeField.getValue().intValue());
             newTask.setLastEdited(LocalDateTime.now());
             taskManager.addTask(newTask);
-            
 
             updateGrid();
             updateCalendar();
@@ -388,15 +402,14 @@ public class TaskGrid {
             addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             addTaskNotif.setDuration(2000);
             dialog.close();
-            
+
         });
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton,saveButton);
-        
-        VerticalLayout dialogLayout = new VerticalLayout(title,fieldLayout,buttonLayout);
+        HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton, saveButton);
 
-        
+        VerticalLayout dialogLayout = new VerticalLayout(title, fieldLayout, buttonLayout);
+
         return dialogLayout;
     }
 
@@ -504,11 +517,11 @@ public class TaskGrid {
         this.showDoneB = showDoneB;
     }
 
-    public String[][] getFilter() {
+    public HashMap<String, Object[]> getFilter() {
         return this.filter;
     }
 
-    public void setFilter(String[][] filter) {
+    public void setFilter(HashMap<String, Object[]> filter) {
         this.filter = filter;
     }
 

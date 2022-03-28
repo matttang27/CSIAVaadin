@@ -8,7 +8,9 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsVariant;
 
 public class NavTab extends Tabs {
+    private Manager manager;
     public NavTab(Manager manager, String selected) {
+        this.manager = manager;
         add(new Tab("Tasks"),new Tab("Groups"), new Tab("Schedule"),new Tab("Statistics"),new Tab("Tools"));
         addSelectedChangeListener(listener -> {
             Tab tab = listener.getSelectedTab();
@@ -19,7 +21,7 @@ public class NavTab extends Tabs {
             
             getUI().ifPresent(ui -> {
                 Component c = ui.getCurrent();
-                ComponentUtil.setData(c,"manager",manager);
+                ComponentUtil.setData(c,"manager",this.manager);
                 ui.navigate(tabName.toLowerCase());
             });
         });

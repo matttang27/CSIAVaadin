@@ -2,6 +2,7 @@ package com.example.application.views.code;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -81,123 +82,7 @@ public class TaskManager {
         }
     }
 
-    static ArrayList<Task> filterByAlpha(ArrayList<Task> tasks, String alpha, int over) {
-        //if over = 1, compare >=
-        //if over = -1, compare <=
-        //if over = 0, compare = (a.k.a search)
-        if (alpha == "") {
-            return tasks;
-        }
-        
-        ArrayList<Task> filtered = new ArrayList<Task>();
-        tasks.forEach((task) -> {
-            //hehe i'm pretty genius
-            //if over is true, does >=, but if false, does <=
-            //never mind over is now an int haha dammit
-            if (over == -1) {
-                if (task.getName().compareToIgnoreCase(alpha) <= 0) {
-                    filtered.add(task);
-                }
-            }
-            else if (over == 0) {
-                if (task.getName().compareToIgnoreCase(alpha) == 0) {
-                    filtered.add(task);
-                }
-            }
-            else if (over == 1) {
-                if (task.getName().compareToIgnoreCase(alpha) >= 0) {
-                    filtered.add(task);
-                }
-            }
-            
-        });
-        return filtered;
-
-    }
-
-    static ArrayList<Task> filterByDue(ArrayList<Task> tasks, int day, int over) {
-        
-        LocalDate now = LocalDate.now();
-        ArrayList<Task> filtered = new ArrayList<Task>();
-        tasks.forEach((task) -> {
-            LocalDate taskDay = task.getNextDue().toLocalDate();
-            int dayDiff = (int) ChronoUnit.DAYS.between(now, taskDay);
-            if (over == -1) {
-                if (dayDiff <= day) {
-                    filtered.add(task);
-                }
-            }
-            else if (over == 0) {
-                if (dayDiff == day) {
-                    filtered.add(task);
-                }
-            }
-            else if (over == 1) {
-                if (dayDiff >= day) {
-                    filtered.add(task);
-                }
-            }
-
-        });
-        return filtered;
-
-    }
-
-    static ArrayList<Task> filterByCreated(ArrayList<Task> tasks, int day, int over) {
-        
-        LocalDate now = LocalDate.now();
-        ArrayList<Task> filtered = new ArrayList<Task>();
-        tasks.forEach((task) -> {
-            LocalDate taskDay = task.getCreated().toLocalDate();
-            int dayDiff = (int) ChronoUnit.DAYS.between(now, taskDay);
-            if (over == -1) {
-                if (dayDiff <= day) {
-                    filtered.add(task);
-                }
-            }
-            else if (over == 0) {
-                if (dayDiff == day) {
-                    filtered.add(task);
-                }
-            }
-            else if (over == 1) {
-                if (dayDiff >= day) {
-                    filtered.add(task);
-                }
-            }
-
-        });
-        return filtered;
-
-    }
-
-
-    static ArrayList<Task> filterByPriority(ArrayList<Task> tasks, int priority, int over) {
-        if (priority == 0) {
-            return tasks;
-        }
-        ;
-        ArrayList<Task> filtered = new ArrayList<Task>();
-        tasks.forEach((task) -> {
-            if (over == -1) {
-                if (task.getPriority() <= priority) {
-                    filtered.add(task);
-                }
-            }
-            else if (over == 0) {
-                if (task.getPriority() == priority) {
-                    filtered.add(task);
-                }
-            }
-            else if (over == 1) {
-                if (task.getPriority() >= priority) {
-                    filtered.add(task);
-                }
-            }
-        });
-        return filtered;
-
-    }
+    
 
     /*
      * 
@@ -338,8 +223,18 @@ public class TaskManager {
         return a;
     }
 
+    public ArrayList<Task> keepGroup(ArrayList<Task> tasks, String groupName) {
+        ArrayList<Task> a = new ArrayList<Task>();
+        for (Task t: tasks) {
+            if (t.getGroup() != null && t.getGroup().getName().equals(groupName)) {
+                a.add(t);
+            }
+        }
+        return a;
+    }
+
     //used for task sorting & filtering in the Main.java
-    public ArrayList<Task> taskSortFilter(String sort,Boolean ascending, Boolean showDone,String[][] filter, ArrayList<Task> original) {
+    public ArrayList<Task> taskSortFilter(String sort,Boolean ascending, Boolean[] booleans,HashMap<String, Object[]> filter, ArrayList<Task> original) {
         ArrayList<Task> newTasks = TaskManager.cloneTasks(original);
         //index 0: alpha, 1: day, 2: priority
         //inside array:
@@ -349,24 +244,14 @@ public class TaskManager {
         //1. Sort
         newTasks = this.sort(newTasks,sort,ascending);
 
-        //2. showDone
-        if (!showDone) {
+        //2. boolean filters: (this will turn into a normal filter if i have the time)
+        if (booleans[0]) {
             newTasks = this.removeDone(newTasks);
         }
 
         //3. Filters
-        if (!filter[0][0].equals("") && !filter[0][1].equals("")) {
-            newTasks = TaskManager.filterByAlpha(newTasks, filter[0][1], Integer.parseInt(filter[0][0]));
-        }
-        if (!filter[1][0].equals("") && !filter[1][1].equals("")) {
-            newTasks = TaskManager.filterByDue(newTasks, Integer.parseInt(filter[1][1]), Integer.parseInt(filter[1][0]));
-        }
-        if (!filter[2][0].equals("") && !filter[2][1].equals("")) {
-            newTasks = TaskManager.filterByPriority(newTasks, Integer.parseInt(filter[2][1]), Integer.parseInt(filter[2][0]));
-        }
-        if (!filter[3][0].equals("") && !filter[3][1].equals("")) {
-            newTasks = TaskManager.filterByCreated(newTasks, Integer.parseInt(filter[3][1]), Integer.parseInt(filter[3][0]));
-        }
+        //TODO: Add global filters
+        //newTasks = this.filter(newTasks,filter);
 
         return newTasks;
     }

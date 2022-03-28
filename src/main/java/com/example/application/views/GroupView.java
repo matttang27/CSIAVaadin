@@ -65,13 +65,6 @@ public class GroupView extends VerticalLayout {
         for (int i=0;i<vIcons.size();i++) {
             icons.add(new Icon(vIcons.get(i)));
         };
-        
-        
-        
-        
-        
-        
-        
 
         //import data
         Component c = UI.getCurrent();
@@ -319,8 +312,15 @@ public class GroupView extends VerticalLayout {
         Details additionalInfo = new Details("Additional Information",additionalLayout);
         additionalInfo.setOpened(false);
 
+        Grid<Task> groupTasks = new Grid<>(Task.class,false);
+        TaskGrid taskGrid = new TaskGrid(groupTasks,manager,null);
+        taskGrid.addContextMenu();
+        groupTasks.setItems(manager.getTasker().keepGroup(taskManager.getTasks(),group.getName()));
 
-        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,selectIcon),colorPicker,goalField,additionalInfo);
+
+
+
+        VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField,selectIcon),colorPicker,goalField,additionalInfo,groupTasks);
 
         Divider divider = new Divider();
         divider.getStyle().set("background-color",group.getColor());
