@@ -85,7 +85,8 @@ public class ScheduleView extends VerticalLayout {
 
     private Dialog addTaskLayout(Dialog dialog) {
         H1 title = new H1();
-        Select select = new Select();
+        Grid<Task> addTaskGrid = new Grid(Task.class,false);
+        
 
 
         return dialog;

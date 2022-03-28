@@ -88,9 +88,6 @@ public class GroupView extends VerticalLayout {
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
 
-
-        groupManager.addGroup(new Group("Test"));
-
         board = new VerticalLayout();
         
         PopulateBoard();
@@ -226,6 +223,9 @@ public class GroupView extends VerticalLayout {
             }
             else if (goalField.getValue() != null && goalField.getValue().intValue() < 0) {
                 error = "Priority must be 0 or greater";
+            }
+            else if (groupManager.findByName(nameField.getValue()) != null) {
+                error = "Group with this name already exists.";
             }
 
             if (!error.equals("")) {

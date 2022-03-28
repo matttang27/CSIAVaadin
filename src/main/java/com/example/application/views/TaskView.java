@@ -3,6 +3,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 import com.example.application.views.code.*;
@@ -104,10 +105,6 @@ public class TaskView extends VerticalLayout {
         user = manager.getUser();
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
-        
-        user = manager.getUser();
-        taskManager = manager.getTasker();
-        groupManager = manager.getGrouper();
         statManager = manager.getStater();
         settingsManager = manager.getSettings();
 
@@ -115,7 +112,7 @@ public class TaskView extends VerticalLayout {
         Tabs tabs = new NavTab(manager,"Tasks");
         add(new VerticalLayout(tabs));
 
-        
+
         Dialog addDialog = new Dialog();
         
         Button addButton = new Button("Add Task",e -> addDialog.open());
@@ -130,27 +127,16 @@ public class TaskView extends VerticalLayout {
         selectSort.setItems("Task Name","Priority","Due Date","Time Created","Group Name","Estimated Time","Task Score");
         selectSort.setValue("Task Name");
         selectSort.addValueChangeListener(e -> {
-            switch (e.getValue()) {
-                case "Task Name":
-                    sortType = "taskName";
-                    break;
-                case "Priority":
-                    sortType = "priority";
-                    break;
-                case "Due Date":
-                    sortType = "day";
-                    break;
-                case "Time Created":
-                    sortType = "created";
-                    break;
-                case "Group Name":
-                    sortType = "groupName";
-                    break;
-                case "Estimated Time":
-                    sortType = "estimatedTime";
-                case "Task Score":
-                    sortType = "taskScore";
-            }
+            HashMap<String,String> labelToSort = new HashMap<String,String>() {{
+                put("Task Name","taskName");
+                put("Priority","priorty");
+                put("Due Date","day");
+                put("Time Created","created");
+                put("Group Name","groupName");
+                put("Estimated Time","estimatedTime");
+                put("Task Score","taskScore");
+            }};
+            sortType = labelToSort.get(e.getValue());
             updateGrid();
         });
 
@@ -238,7 +224,6 @@ public class TaskView extends VerticalLayout {
             score = Math.round(score*100.0)/100.0;
             return score;
         }).setHeader("Task Score").setKey("score");
-        grid.setColumnReorderingAllowed(true);
 
 
         
@@ -318,7 +303,7 @@ public class TaskView extends VerticalLayout {
         
     }
     //addTaskLayout - creates the Layout for the Add Task Dialog
-    private VerticalLayout addTaskLayout(Dialog dialog,Grid grid) {
+    private VerticalLayout addTaskLayout(Dialog dialog,Grid<Task> grid) {
         
         H2 title = new H2("Add a new task");
 
@@ -390,7 +375,8 @@ public class TaskView extends VerticalLayout {
         return dialogLayout;
     }
 
-    private VerticalLayout viewItemLayout(Dialog dialog,Grid grid,Task selectTask) {
+    private VerticalLayout viewItemLayout(Dialog dialog,Grid<Task> grid,Task selectTask) {
+        
         H1 title = new H1(selectTask.getName());
 
         TextField nameField = new TextField("Task Name");
@@ -420,6 +406,7 @@ public class TaskView extends VerticalLayout {
         TextField editField = new TextField("Last edited");
         editField.setValue(selectTask.getLastEdited().format(defDTFormat));
         editField.setReadOnly(true);
+        
 
 
         TextArea notesField = new TextArea("Notes");
