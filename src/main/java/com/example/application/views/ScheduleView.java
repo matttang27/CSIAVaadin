@@ -1,4 +1,5 @@
 package com.example.application.views;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
@@ -33,6 +35,7 @@ import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 import org.vaadin.stefan.fullcalendar.SchedulerView;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -45,9 +48,12 @@ public class ScheduleView extends VerticalLayout {
     private TaskManager taskManager;
     private GroupManager groupManager;
     private StatManager statManager;
+    private ScheduleManager scheduleManager;
     private User user;
     private FullCalendar calendar;
-    private ScheduleManager scheduler;
+    private Event doing;
+    private LocalDate date = LocalDate.now();
+    private Grid<Event> scheduleGrid;
     public ScheduleView() {
 
         //import data
@@ -62,7 +68,7 @@ public class ScheduleView extends VerticalLayout {
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
         statManager = manager.getStater();
-        scheduler = manager.getScheduler();
+        scheduleManager = manager.getScheduler();
 
         NavTab tabs = new NavTab(manager,"Schedule");
         add(new VerticalLayout(tabs));
@@ -74,27 +80,49 @@ public class ScheduleView extends VerticalLayout {
         Dialog addEventDialog = new Dialog();
         Button addEventButton = new Button("Add Event",e -> addEventDialog.open());
 
-        add(new HorizontalLayout(addTaskButton,addEventButton));
+        DatePicker daySchedule = new DatePicker("Day");
+        daySchedule.setValue(LocalDate.now());
+        daySchedule.addValueChangeListener(e -> {
+            date = e.getValue();
+            updateGrid();
+        });
+        add(new HorizontalLayout(addTaskButton,addEventButton,daySchedule));
         
-        Grid<Event> grid = new Grid<>(Event.class,false);
-        
-        add(grid);
+        scheduleGrid = new Grid<>(Event.class,false);
+        scheduleGrid.addComponentColumn(event -> {
+            RadioButtonGroup<String> radioButton = new RadioButtonGroup<>();
+            radioButton.add("");
+            radioButton.setValue("");
+            return radioButton;
+        }).setKey("doing").setHeader("Doing");
+        updateGrid();
+        add(scheduleGrid);
         
 
     }
 
-    private HorizontalLayout addTaskLayout(Dialog dialog) {
+    private void updateGrid() {
+        scheduleGrid.setItems(scheduleManager.getDay(date).getEvents());
+    }
+
+    private VerticalLayout addTaskLayout(Dialog dialog) {
         dialog.setWidth("50%");
-        H1 title = new H1("Add a task:");
-        Grid<Task> grid = new Grid(Task.class,false);
+        H2 title = new H2("Select task:");
+        Grid<Task> grid = new Grid<>(Task.class,false);
+        
         TaskGrid taskGrid = new TaskGrid(grid,manager,null);
-        taskGrid.addContextMenu();
         taskGrid.setSortType("taskScore");
         taskGrid.setAscending(false);
         taskGrid.updateGrid();
+        GridContextMenu<Task> contextMenu = grid.addContextMenu();
+        contextMenu.addItem("Select", e -> {
+            System.out.println(e);
+        });
         
 
-        return new HorizontalLayout(title,new Divider(),grid);
+        
+
+        return new VerticalLayout(title,grid);
 
     }
 }

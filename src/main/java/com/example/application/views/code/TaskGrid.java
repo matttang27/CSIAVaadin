@@ -68,28 +68,28 @@ public class TaskGrid {
         SettingsManager settingsManager = manager.getSettings();
         grid.addComponentColumn(
 
-                task -> {
-                    Checkbox checkBox = new Checkbox();
+            task -> {
+                Checkbox checkBox = new Checkbox();
 
-                    checkBox.setValue(task.getDone());
-                    checkBox.addClickListener(event -> {
-                        // we need to get the taskManager task, not the grid task
-                        Task selectedTask = taskManager.getTask(task.getId());
-                        System.out.println(event.getSource().getValue());
+                checkBox.setValue(task.getDone());
+                checkBox.addClickListener(event -> {
+                    // we need to get the taskManager task, not the grid task
+                    Task selectedTask = taskManager.getTask(task.getId());
+                    System.out.println(event.getSource().getValue());
 
-                        selectedTask.setDone(event.getSource().getValue());
-                        if (event.getSource().getValue()) {
-                            Notification doneNotif = Notification.show("Completed Task!");
-                            doneNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                            doneNotif.setDuration(2000);
+                    selectedTask.setDone(event.getSource().getValue());
+                    if (event.getSource().getValue()) {
+                        Notification doneNotif = Notification.show("Completed Task!");
+                        doneNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                        doneNotif.setDuration(2000);
 
-                        }
-                        updateGrid();
+                    }
+                    updateGrid();
 
-                    });
+                });
 
-                    return checkBox;
-                }).setFrozen(true).setKey("done").setHeader("Done");
+                return checkBox;
+            }).setFrozen(true).setKey("done").setHeader("Done");
 
         grid.addColumn(Task::getName).setHeader("Name").setKey("name");
         // DONE: Change getNextDue format (preferably without an entire new function)

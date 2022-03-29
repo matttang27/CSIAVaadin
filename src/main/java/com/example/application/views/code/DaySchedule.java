@@ -6,11 +6,10 @@ import java.util.ArrayList;
 
 public class DaySchedule {
     private LocalDate day;
+    private DayStat dayStat;
     private ArrayList<Event> events = new ArrayList<Event>();
     private DayStat stats;
-    private Manager manager;
-    public DaySchedule(Manager manager, LocalDate day) {
-        this.manager = manager;
+    public DaySchedule(LocalDate day) {
         this.day = day;
     }
 
@@ -36,14 +35,6 @@ public class DaySchedule {
 
     public void setStats(DayStat stats) {
         this.stats = stats;
-    }
-
-    public Manager getManager() {
-        return this.manager;
-    }
-
-    public void setManager(Manager manager) {
-        this.manager = manager;
     }
 
     public Event timeFree(LocalTime time) {

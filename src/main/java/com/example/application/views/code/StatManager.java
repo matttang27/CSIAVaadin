@@ -19,6 +19,22 @@ public class StatManager {
     public void setData(HashMap<LocalDate,DayStat> data) {
         this.data = data;
     }
+
+    public boolean dayExists(LocalDate day) {
+        return data.keySet().contains(day);
+    }
+
+    public void addDay(LocalDate day) {
+        if (dayExists(day)) {return;};
+        DayStat dayStat = new DayStat(day);
+        DaySchedule daySchedule = new DaySchedule(day);
+        dayStat.setDaySchedule(daySchedule);
+        daySchedule.setStats(dayStat);
+
+        data.put(day,dayStat);
+        HashMap<LocalDate,DaySchedule> scheduleData = manager.getScheduler().getDays();
+        scheduleData.put(day,daySchedule);
+    }
     
 
     public Manager getManager() {
