@@ -73,21 +73,8 @@ public class TaskView extends VerticalLayout {
         
 
         
-        // Sign-in not implemented yet
-        // System.out.println("Create an Account:");
-        // System.out.println("Enter name:");
-        // String name = input.nextLine();
-        // System.out.println("Creating account...");
-        // might change how this works...do i even need a manager?
-        // I'll change it if it ever inconveniences me >:D
 
         //TODO: ADD RANGE SLIDER
-        // PaperRangeSlider slider = new PaperRangeSlider(-100, 100, -50, 50);
-        // slider.setVisible(true);
-        // add(slider);
-
-        // PaperSlider slider2 = new PaperSlider();
-        // add(slider2);
 
 
 

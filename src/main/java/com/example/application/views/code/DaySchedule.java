@@ -29,6 +29,10 @@ public class DaySchedule {
         this.events = events;
     }
 
+    public void addEvent(Event event) {
+        events.add(event);
+    }
+
     public DayStat getStats() {
         return this.stats;
     }

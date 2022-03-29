@@ -44,14 +44,16 @@ public class TaskGrid {
     private String viewMode = "grid";
     private boolean ascending = true;
     private boolean showDoneB = false;
-    private HashMap<String,Object[]> filter = new HashMap<String,Object[]>() {{
-        put("taskName",new Object[]{"",null});
-        put("day",new Object[]{"",null});
-        put("priority",new Object[]{"",null});
-        put("created",new Object[]{"",null});
-        put("estimatedTime",new Object[]{"",null});
-        put("taskScore",new Object[]{"",null});
-    }};
+    private HashMap<String, Object[]> filter = new HashMap<String, Object[]>() {
+        {
+            put("taskName", new Object[] { "", null });
+            put("day", new Object[] { "", null });
+            put("priority", new Object[] { "", null });
+            put("created", new Object[] { "", null });
+            put("estimatedTime", new Object[] { "", null });
+            put("taskScore", new Object[] { "", null });
+        }
+    };
 
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -68,28 +70,27 @@ public class TaskGrid {
         SettingsManager settingsManager = manager.getSettings();
         grid.addComponentColumn(
 
-            task -> {
-                Checkbox checkBox = new Checkbox();
+                task -> {
+                    Checkbox checkBox = new Checkbox();
 
-                checkBox.setValue(task.getDone());
-                checkBox.addClickListener(event -> {
-                    // we need to get the taskManager task, not the grid task
-                    Task selectedTask = taskManager.getTask(task.getId());
-                    System.out.println(event.getSource().getValue());
+                    checkBox.setValue(task.getDone());
+                    checkBox.addClickListener(event -> {
+                        // we need to get the taskManager task, not the grid task
+                        Task selectedTask = taskManager.getTask(task.getId());
 
-                    selectedTask.setDone(event.getSource().getValue());
-                    if (event.getSource().getValue()) {
-                        Notification doneNotif = Notification.show("Completed Task!");
-                        doneNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                        doneNotif.setDuration(2000);
+                        selectedTask.setDone(event.getSource().getValue());
+                        if (event.getSource().getValue()) {
+                            Notification doneNotif = Notification.show("Completed Task!");
+                            doneNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                            doneNotif.setDuration(2000);
 
-                    }
-                    updateGrid();
+                        }
+                        updateGrid();
 
-                });
+                    });
 
-                return checkBox;
-            }).setFrozen(true).setKey("done").setHeader("Done");
+                    return checkBox;
+                }).setFrozen(true).setKey("done").setHeader("Done");
 
         grid.addColumn(Task::getName).setHeader("Name").setKey("name");
         // DONE: Change getNextDue format (preferably without an entire new function)
@@ -98,7 +99,7 @@ public class TaskGrid {
         }).setHeader("Due").setKey("due");
         grid.addColumn(Task::getPriority).setHeader("Priority").setKey("priority");
         grid.addColumn(t -> {
-            System.out.println(t.getEstimatedTime());
+
             return t.getEstimatedTime();
         }).setHeader("Estimated Time").setKey("estimatedTime");
         grid.addComponentColumn(
@@ -138,7 +139,7 @@ public class TaskGrid {
         TaskManager taskManager = manager.getTasker();
         ArrayList<Task> tasks = taskManager.getTasks();
 
-        tasks = taskManager.taskSortFilter(sortType, ascending, new Boolean[]{showDoneB}, filter, tasks);
+        tasks = taskManager.taskSortFilter(sortType, ascending, new Boolean[] { showDoneB }, filter, tasks);
         grid.setItems(tasks);
     }
 
@@ -146,9 +147,7 @@ public class TaskGrid {
         GridContextMenu<Task> menu = grid.addContextMenu();
         menu.addItem("View", event -> {
             // exits if the user selected empty space
-            if (event.getItem() == null) {
-                return;
-            }
+            if (event.getItem().isEmpty()) {return;};
             Task selectedTask = event.getItem().get();
             // we need to get the taskManager task, not the grid task
             selectedTask = manager.getTasker().getTask(selectedTask.getId());
@@ -171,8 +170,7 @@ public class TaskGrid {
     public void updateCalendar() {
         if (calendar == null) {
             return;
-        }
-        ;
+        };
         ArrayList<Task> tasks = manager.getTasker().getTasks();
 
         calendar.removeAllEntries();
@@ -287,7 +285,7 @@ public class TaskGrid {
 
         HorizontalLayout finalLayout = new HorizontalLayout(title, divider, fieldLayout);
         Button cancelButton = new Button("Cancel", e -> dialog.close());
-        selectTask.setName("TEST");
+
         Button saveButton = new Button("Save", e -> {
             // checks whether any of the fields are empty, if true, sends a notification and
             // cancels
@@ -315,7 +313,6 @@ public class TaskGrid {
             selectTask.setLastEdited(LocalDateTime.now());
             selectTask.setNotes(notesField.getValue());
             selectTask.setGroup(groupManager.findByName(groupField.getValue()));
-            System.out.println(selectTask);
 
             updateCalendar();
             updateGrid();

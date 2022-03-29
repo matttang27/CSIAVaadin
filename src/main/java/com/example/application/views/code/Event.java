@@ -9,13 +9,27 @@ public class Event {
     private LocalTime endTime;
     private Duration timeSpent;
     private boolean doing;
+    private Task task;
     
 
-    public Event(String name, LocalTime startTime, LocalTime endTime) {
+    public Event(String name, LocalTime startTime, LocalTime endTime, Task task) {
         this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
         timeSpent = Duration.ZERO;
+        this.task = task;
+    }
+    public Event() {
+        
+    }
+
+
+    public Task getTask() {
+        return this.task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 
     public String getName() {
