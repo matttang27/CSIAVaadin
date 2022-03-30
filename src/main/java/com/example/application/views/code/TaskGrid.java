@@ -290,7 +290,7 @@ public class TaskGrid {
             // checks whether any of the fields are empty, if true, sends a notification and
             // cancels
             String error = "";
-            if (nameField.getValue() == null || dueField.getValue() == null || priorityField.getValue() == null) {
+            if (nameField.getValue().equals("") || dueField.getValue() == null || priorityField.getValue() == null) {
                 error = "Fill in all required fields";
             } else if (priorityField.getValue().intValue() > 10 || priorityField.getValue().intValue() < 1) {
                 error = "Priority not in range";
@@ -371,7 +371,7 @@ public class TaskGrid {
             // checks whether any of the fields are empty, if true, sends a notification and
             // cancels
             String error = "";
-            if (nameField.getValue() == null || dueField.getValue() == null || priorityField.getValue() == null) {
+            if (nameField.getValue().equals("") || dueField.getValue() == null || priorityField.getValue() == null) {
                 error = "Fill in all required fields";
             } else if (priorityField.getValue().intValue() > 10 || priorityField.getValue().intValue() < 1) {
                 error = "Priority not in range (1-10)";

@@ -103,14 +103,31 @@ public class ScheduleView extends VerticalLayout {
         add(new HorizontalLayout(addEventButton,datePicker));
         
         scheduleGrid = new Grid<>(Event.class,false);
+        
         scheduleGrid.addComponentColumn(event -> {
             RadioButtonGroup<String> radioButton = new RadioButtonGroup<>();
-            radioButton.add("");
-            radioButton.setValue("");
+            radioButton.setItems("");
+            if (event.getDoing()) {
+                radioButton.setValue("");
+            }
+            radioButton.addValueChangeListener(e -> {
+                for (Event ev: daySchedule.getEvents()) {
+                    ev.setDoing(false);
+                }
+                event.setDoing(true);
+                updateGrid();
+            });
+            
             return radioButton;
         }).setKey("doing").setHeader("Doing");
+        scheduleGrid.addColumn(event -> {
+            return String.format("%s-%s",event.getStartTime(),event.getEndTime());
+        }).setHeader("Time").setKey("time");
         scheduleGrid.addColumn(Event::getName).setHeader("Name").setKey("name");
-        scheduleGrid.setItems();
+        scheduleGrid.addColumn(e -> {
+            return e.getTimeSpentString();
+        }).setHeader("Time Spent").setKey("timeSpent");
+        
         updateGrid();
         add(scheduleGrid);
         
@@ -144,19 +161,29 @@ public class ScheduleView extends VerticalLayout {
         return new VerticalLayout(title,grid,cancelButton);
 
     }
-    private VerticalLayout addEventLayout(Dialog dialog) {
+    private VerticalLayout addEventLayout(Dialog dialog, Event event) {
 
         selectTask = null;
 
         dialog.setWidth("50%");
-        H2 title = new H2("Add Event:");
+        H2 title = event == null ? new H2("Add Event:") : new H2(event.getName());
         TimePicker startField = new TimePicker("Start Time");
         TimePicker endField = new TimePicker("End Time");
         TextField nameField = new TextField("Name");
-        
+        if (event != null) {
+            startField.setValue(event.getStartTime());
+            endField.setValue(event.getEndTime());
+            nameField.setValue(event.getName());
+        }
         Dialog selectTaskDialog = new Dialog();
         Button selectTaskButton = new Button("Select Task",e -> selectTaskDialog.open());
         selectTaskDialog.add(selectTaskLayout(selectTaskDialog));
+        selectTaskDialog.addDialogCloseActionListener(e -> {
+            if (selectTask != null) {
+                nameField.setValue(selectTask.getName());
+            }
+        });
+
 
         HorizontalLayout nameLayout = new HorizontalLayout(selectTaskButton,new H4("Or"),nameField);
         nameLayout.setAlignItems(Alignment.CENTER);
@@ -168,11 +195,20 @@ public class ScheduleView extends VerticalLayout {
             // cancels
             String error = "";
 
-            if (startField.getValue() == null || endField.getValue() == null || (nameField.getValue() == null && selectTask == null)) {
+            if (startField.getValue() == null || endField.getValue() == null || (nameField.getValue().equals("") && selectTask == null)) {
                 error = "Please fill all fields.";
             }
             else if (startField.getValue().compareTo(endField.getValue()) > 0 || startField.getValue() == endField.getValue()) {
                 error = "Start time cannot be same or later than end time";
+            }
+            
+
+
+            if (!error.equals("")) {
+                Notification errorNotif = Notification.show(error);
+                errorNotif.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                errorNotif.setDuration(2000);
+                return;
             }
 
             Event newEvent = new Event();
@@ -183,15 +219,6 @@ public class ScheduleView extends VerticalLayout {
             newEvent.setDoing(false);
 
             daySchedule.addEvent(newEvent);
-            
-
-
-            if (!error.equals("")) {
-                Notification errorNotif = Notification.show(error);
-                errorNotif.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                errorNotif.setDuration(2000);
-                return;
-            }
 
             updateGrid();
             // TODO: ADD ENTRY CLICK LISTENERS TO CALENDAR
@@ -213,4 +240,5 @@ public class ScheduleView extends VerticalLayout {
 
         return finalLayout;
     }
+    
 }

@@ -7,20 +7,20 @@ public class Event {
     private String name;
     private LocalTime startTime;
     private LocalTime endTime;
-    private Duration timeSpent;
+    private Duration timeSpent = Duration.ZERO;
     private boolean doing;
     private Task task;
     
 
-    public Event(String name, LocalTime startTime, LocalTime endTime, Task task) {
+    public Event(String name, LocalTime startTime, LocalTime endTime, Task task, Duration timeSpent) {
         this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
-        timeSpent = Duration.ZERO;
+        this.timeSpent = timeSpent;
         this.task = task;
     }
     public Event() {
-        
+
     }
 
 
@@ -71,6 +71,10 @@ public class Event {
 
     public Duration getTimeSpent() {
         return this.timeSpent;
+    }
+    public String getTimeSpentString() {
+        long s = this.timeSpent.getSeconds();
+        return String.format("%d:%02d:%02d", s / 3600, (s % 3600) / 60, (s % 60));
     }
 
     public void setTimeSpent(Duration timeSpent) {
