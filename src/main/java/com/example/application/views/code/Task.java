@@ -3,6 +3,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.awt.Color;
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.text.ParseException;
@@ -10,7 +11,7 @@ import java.text.SimpleDateFormat;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
-public class Task {
+public class Task implements Serializable {
     private String name;
     private LocalDateTime created;
     private LocalDateTime lastEdited;
@@ -31,12 +32,10 @@ public class Task {
     private ArrayList<Task> children;
     //originally Group / Task, may change it to entry / task
     private String type;
-    //respective entry in calendar
-    private Entry entry;
 
     //Why do i have 3 constructors? ... that's a good question.
 
-    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime start, LocalDateTime nextDue, Group group, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String notes, int id, int weight, int estimatedTime, ArrayList<Task> children, String type, Entry entry) {
+    public Task(String name, LocalDateTime created, LocalDateTime lastEdited, LocalDateTime start, LocalDateTime nextDue, Group group, String cronJob, int priority, boolean done, Color color, String background, String icon, Task parent, String notes, int id, int weight, int estimatedTime, ArrayList<Task> children, String type) {
         this.name = name;
         this.created = created;
         this.lastEdited = lastEdited;
@@ -56,7 +55,6 @@ public class Task {
         this.estimatedTime = estimatedTime;
         this.children = children;
         this.type = type;
-        this.entry = entry;
     }
 
 
@@ -193,13 +191,6 @@ public class Task {
         return this.start;
     }
 
-    public Entry getEntry() {
-        return this.entry;
-    }
-
-    public void setEntry(Entry entry) {
-        this.entry = entry;
-    }
 
 
     public String getCronJob() {
@@ -263,7 +254,6 @@ public class Task {
             ", id='" + getId() + "'" +
             ", children='" + getChildren() + "'" +
             ", type='" + getType() + "'" +
-            ", entry='" + getEntry() + "'" +
             "}";
     }
 
@@ -325,7 +315,7 @@ public class Task {
         //thank god for vscode
 
     
-        return new Task(name, created, lastEdited, start, nextDue, group, cronJob, priority, done, color, background, icon, parent, notes, id, weight, estimatedTime, children, type, entry);
+        return new Task(name, created, lastEdited, start, nextDue, group, cronJob, priority, done, color, background, icon, parent, notes, id, weight, estimatedTime, children, type);
     }
 
 }

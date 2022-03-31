@@ -1,11 +1,12 @@
 package com.example.application.views.code;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import com.vaadin.flow.component.icon.Icon;
 
-public class Group {
+public class Group implements Serializable {
     private String name = "";
     private ArrayList<Task> tasks = new ArrayList<Task>();
     private LocalDateTime created = LocalDateTime.now();

@@ -1,8 +1,9 @@
 package com.example.application.views.code; 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class User {
+public class User implements Serializable {
     String name;
     //Image icon - will be implemented in actual app
     LocalDate birthday;

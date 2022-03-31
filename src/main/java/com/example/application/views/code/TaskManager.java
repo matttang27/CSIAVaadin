@@ -4,11 +4,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-public class TaskManager {
+public class TaskManager implements Serializable {
     ArrayList<Task> tasks;
     Manager manager;
 

@@ -1,10 +1,11 @@
 package com.example.application.views.code;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class DaySchedule {
+public class DaySchedule implements Serializable {
     private LocalDate day;
     private DayStat dayStat;
     private ArrayList<Event> events = new ArrayList<Event>();

@@ -181,7 +181,6 @@ public class TaskGrid {
             entry.setEnd(newTask.getNextDue());
             entry.setStart(newTask.getNextDue());
             calendar.addEntry(entry);
-            newTask.setEntry(entry);
         });
 
     }

@@ -88,7 +88,7 @@ public class ScheduleView extends VerticalLayout {
         
         Dialog addEventDialog = new Dialog();
         Button addEventButton = new Button("Add Event",e -> addEventDialog.open());
-        addEventDialog.add(addEventLayout(addEventDialog));
+        addEventDialog.add(addEventLayout(addEventDialog,null));
 
         DatePicker datePicker = new DatePicker("Day");
         datePicker.setValue(LocalDate.now());

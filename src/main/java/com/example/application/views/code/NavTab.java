@@ -39,5 +39,14 @@ public class NavTab extends Tabs {
         }
         return null;
     }
+
+    public Manager getManager() {
+        return this.manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+    
 }
 

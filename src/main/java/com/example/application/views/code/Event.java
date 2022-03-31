@@ -1,9 +1,10 @@
 package com.example.application.views.code;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalTime;
 
-public class Event {
+public class Event implements Serializable {
     private String name;
     private LocalTime startTime;
     private LocalTime endTime;

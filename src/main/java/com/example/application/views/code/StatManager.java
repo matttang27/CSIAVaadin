@@ -1,10 +1,11 @@
 package com.example.application.views.code;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class StatManager {
+public class StatManager implements Serializable {
     private HashMap<LocalDate,DayStat> data;
     private Manager manager;
     public StatManager(Manager manager) {

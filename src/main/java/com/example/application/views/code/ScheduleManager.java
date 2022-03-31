@@ -1,9 +1,10 @@
 package com.example.application.views.code;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 
-public class ScheduleManager {
+public class ScheduleManager implements Serializable {
     private HashMap<LocalDate,DaySchedule> days;
     private Manager manager;
     public ScheduleManager(Manager manager) {

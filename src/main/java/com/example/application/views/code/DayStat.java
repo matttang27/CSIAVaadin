@@ -1,8 +1,9 @@
 package com.example.application.views.code;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class DayStat {
+public class DayStat implements Serializable {
     private LocalDate day;
     private DaySchedule daySchedule;
     private int tasksCompleted = 0;

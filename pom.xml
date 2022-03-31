@@ -124,9 +124,19 @@
             <version>4.1.2</version>
         </dependency>
         <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>8.1.0</version>
+          </dependency>
+        <dependency>
             <groupId>org.vaadin.stefan</groupId>
             <artifactId>fullcalendar2-scheduler</artifactId>
             <version>4.1.2</version>
+         </dependency>
+         <dependency>
+            <groupId>org.vaadin.olli</groupId>
+            <artifactId>file-download-wrapper</artifactId>
+            <version>3.0.1</version>
          </dependency>
         <dependency>
             <groupId>org.vaadin.zhe</groupId>

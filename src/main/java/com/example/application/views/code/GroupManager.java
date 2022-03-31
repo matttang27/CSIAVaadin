@@ -1,7 +1,8 @@
 package com.example.application.views.code;
 import java.util.ArrayList;
 //honestly I'm not sure if I even need a GroupManager
-public class GroupManager {
+import java.io.Serializable;
+public class GroupManager implements Serializable {
     ArrayList<Group> groups;
     Manager manager;
     public GroupManager(Manager manager) {

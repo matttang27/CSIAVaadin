@@ -1,6 +1,8 @@
 package com.example.application.views.code;
 
-public class SettingsManager {
+import java.io.Serializable;
+
+public class SettingsManager implements Serializable {
     private double scoreA;
     private double scoreB;
     private double scoreC;

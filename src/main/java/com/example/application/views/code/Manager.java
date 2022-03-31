@@ -1,6 +1,7 @@
 package com.example.application.views.code;
 import java.util.ArrayList;
-public class Manager {
+import java.io.Serializable;
+public class Manager implements Serializable {
 
 
     //currently this is so that everything can be connected to one spot, but not sure if I really need that
