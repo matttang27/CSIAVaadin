@@ -135,7 +135,11 @@ public class ScheduleView extends VerticalLayout {
         contextMenu.addItem("Delete",e -> {
             if (!e.getItem().isPresent()) {return;}
             Event selectEvent = this.daySchedule.getFromId(e.getItem().get().getId());
-            daySchedule.deleteEvent(selectEvent);
+            if (selectEvent != null) {
+                daySchedule.deleteEvent(selectEvent);
+            }
+            
+            updateGrid();
             updateGrid();
 
         });

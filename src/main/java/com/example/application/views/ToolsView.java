@@ -76,7 +76,6 @@ public class ToolsView extends VerticalLayout {
             oos.writeObject(manager);
             oos.flush();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
@@ -125,6 +124,11 @@ public class ToolsView extends VerticalLayout {
         });
 
         add(singleFileUpload);
+
+
+        
+        
+
         
         
 
