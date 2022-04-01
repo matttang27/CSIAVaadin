@@ -1,10 +1,12 @@
 package com.example.application.views.code;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.example.application.views.GroupView;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -17,6 +19,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -31,7 +34,7 @@ import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 
 //class for making it easier to create Task Grids
-public class TaskGrid {
+public class TaskGrid{
     public Grid<Task> grid;
     private FullCalendar calendar;
     private Manager manager;
@@ -44,6 +47,7 @@ public class TaskGrid {
     private String viewMode = "grid";
     private boolean ascending = true;
     private boolean showDoneB = false;
+    private HashMap<String, Icon> icons = GroupView.loadIcons();
     private HashMap<String, Object[]> filter = new HashMap<String, Object[]>() {
         {
             put("taskName", new Object[] { "", null });
@@ -109,7 +113,7 @@ public class TaskGrid {
                     if (task.getGroup() != null) {
 
                         if (task.getGroup().getIcon() != null) {
-                            div.add(task.getGroup().getIcon());
+                            div.add(icons.get(task.getGroup().getIcon()));
                         }
                         Div colorDiv = new Div();
                         colorDiv.getStyle().set("background-color", task.getGroup().getColor());

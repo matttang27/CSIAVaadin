@@ -1,9 +1,29 @@
 package com.example.application.views;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import com.example.application.views.code.*;
+import com.google.api.core.ApiFuture;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.ActionCodeSettings;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.UserRecord;
+import com.google.firebase.auth.UserRecord.CreateRequest;
+import com.google.firebase.cloud.FirestoreClient;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
@@ -31,9 +51,55 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.textfield.*;
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("login")
-@Route(value = "")
+@Route(value = "login")
 public class LoginView extends VerticalLayout {
+    
     public LoginView() {
+
+        FileInputStream serviceAccount;
+        try {
+            if (FirebaseApp.getInstance() == null) {
+                serviceAccount = new FileInputStream("src/main/java/com/example/application/key.json");
+            
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .build();
+                FirebaseApp.initializeApp(options);
+            }
+            String UID = "qoswA226dgZygV45kgPZqX3QKnI2";
+            FirebaseAuth instance = FirebaseAuth.getInstance();
+            
+            //UserRecord userRecord = instance.generateSignInWithEmailLink("matttang27@gmail.com", ActionCodeSettings.builder().build());
+            CreateRequest newUser = new CreateRequest();
+            newUser.setEmail("matttangclone1@gmail.com");
+            newUser.setPassword("Test1234");
+            instance.createUser(newUser);
+
+            Firestore db = FirestoreClient.getFirestore();
+            // See the UserRecord reference doc for the contents of userRecord.
+            //System.out.println("Successfully fetched user data: " + userRecord.getUid());
+            DocumentReference docRef = db.collection("users").document(UID);
+            ApiFuture<DocumentSnapshot> future = docRef.get();
+            // ...
+            // future.get() blocks on response
+            DocumentSnapshot document = future.get();
+            if (document.exists()) {
+            System.out.println("Document data: " + document.getData());
+            } else {
+            System.out.println("No such document!");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
+        
         //Fake login for now
         LoginForm loginForm = new LoginForm();
         add(loginForm);

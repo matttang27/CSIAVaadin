@@ -22,7 +22,13 @@ public class NavTab extends Tabs {
             getUI().ifPresent(ui -> {
                 Component c = ui.getCurrent();
                 ComponentUtil.setData(c,"manager",this.manager);
-                ui.navigate(tabName.toLowerCase());
+                if (tabName.equals("Tools")) {
+                    ui.navigate("");
+                }
+                else {
+                    ui.navigate(tabName.toLowerCase());
+                }
+                
             });
         });
         

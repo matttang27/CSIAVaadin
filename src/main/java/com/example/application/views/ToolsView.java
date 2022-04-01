@@ -43,7 +43,7 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("Tools")
-@Route(value = "tools")
+@Route(value = "")
 public class ToolsView extends VerticalLayout {
     private Manager manager;
     private TaskManager taskManager;
@@ -101,7 +101,8 @@ public class ToolsView extends VerticalLayout {
                 ObjectInput in = null;
                 try {
                     in = new ObjectInputStream(bis);
-                    this.manager = (Manager) in.readObject();
+                    Manager manager = (Manager) in.readObject();
+                    this.manager = manager;
                     tabs.setManager(this.manager);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();

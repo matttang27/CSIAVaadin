@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Optional;
 
 import com.example.application.views.code.*;
@@ -50,21 +51,20 @@ import java.awt.Color;
 @PageTitle("Groups")
 @Route(value = "groups")
 public class GroupView extends VerticalLayout {
+    //TODO: GROUPVIEW CRASHES IF IMMEDIATELY SWTICHING FROM TOOLS AFTER IMPORT
     private VerticalLayout board;
     private User user;
     private Manager manager;
     private TaskManager taskManager;
     private GroupManager groupManager;
-    private ArrayList<VaadinIcon> vIcons = new ArrayList<VaadinIcon>(Arrays.asList(VaadinIcon.values()));
-    private Collection<Icon> icons = new ArrayList<Icon>();
+    static private ArrayList<VaadinIcon> vIcons = new ArrayList<VaadinIcon>(Arrays.asList(VaadinIcon.values()));
+    public static HashMap<String,Icon> icons = loadIcons();
+    
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     
      
     public GroupView() {
-
-        for (int i=0;i<vIcons.size();i++) {
-            icons.add(new Icon(vIcons.get(i)));
-        };
+        
 
         //import data
         Component c = UI.getCurrent();
@@ -128,6 +128,15 @@ public class GroupView extends VerticalLayout {
         
     }
 
+    static public HashMap<String,Icon> loadIcons() {
+        icons = new HashMap<String,Icon>();
+        for (int i=0;i<vIcons.size();i++) {
+            Icon icon = new Icon(vIcons.get(i));
+            
+            icons.put(icon.getElement().getAttribute("icon"),new Icon(vIcons.get(i)));
+        };
+        return icons;
+    }
     public VerticalLayout groupToBoard(Group group) {
         if (group == null) {
             return new VerticalLayout();
@@ -149,7 +158,7 @@ public class GroupView extends VerticalLayout {
         Div titlePart = new Div();
         titlePart.getStyle().set("display","inline-block");
         if (group.getIcon() != null) {
-            titlePart.add(group.getIcon());
+            titlePart.add(icons.get(group.getIcon()));
         }
         titlePart.add(title);
         boardPiece.add(titlePart,pending);
@@ -194,7 +203,7 @@ public class GroupView extends VerticalLayout {
         selectIcon.setLabel("Icon");
         
         
-        selectIcon.setItems(icons);
+        selectIcon.setItems(icons.values());
         
 
         TextField nameField = new TextField("Task Name");
@@ -232,7 +241,7 @@ public class GroupView extends VerticalLayout {
             
             newGroup.setLastEdited(LocalDateTime.now());
             newGroup.setColor(colorPicker.getValue());
-            newGroup.setIcon(selectIcon.getValue());
+            newGroup.setIcon(selectIcon.getValue().getElement().getAttribute("icon"));
             newGroup.setGoal(goalField.getValue().intValue());
             groupManager.addGroup(newGroup);
             
@@ -278,9 +287,9 @@ public class GroupView extends VerticalLayout {
         selectIcon.setLabel("Icon");
         
         
-        selectIcon.setItems(icons);
+        selectIcon.setItems(icons.values());
         if (group.getIcon() != null) {
-            selectIcon.setValue(group.getIcon());
+            selectIcon.setValue(icons.get(group.getIcon()));
         }
         
 
@@ -345,7 +354,7 @@ public class GroupView extends VerticalLayout {
             group.setName(nameField.getValue());
             group.setLastEdited(LocalDateTime.now());
             group.setColor(colorPicker.getValue());
-            group.setIcon(selectIcon.getValue());
+            group.setIcon(selectIcon.getValue().getElement().getAttribute("icon"));
             group.setNotes(notesField.getValue());
             
             PopulateBoard();

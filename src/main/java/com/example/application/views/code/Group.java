@@ -15,7 +15,7 @@ public class Group implements Serializable {
     private int goal = 0;
     private String color = "#808080";
     private int id;
-    private Icon icon;
+    private String icon;
     private String notes = "";
 
     public String getNotes() {
@@ -28,11 +28,11 @@ public class Group implements Serializable {
 
 
 
-    public Icon getIcon() {
+    public String getIcon() {
         return this.icon;
     }
 
-    public void setIcon(Icon icon) {
+    public void setIcon(String icon) {
         this.icon = icon;
     }
 

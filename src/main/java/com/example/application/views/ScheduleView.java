@@ -1,4 +1,5 @@
 package com.example.application.views;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -61,6 +62,7 @@ public class ScheduleView extends VerticalLayout {
     private Grid<Event> scheduleGrid;
     private DaySchedule daySchedule;
     private Task selectTask;
+    private LocalDate back = LocalDate.now();
     public ScheduleView() {
 
         //import data
@@ -83,8 +85,9 @@ public class ScheduleView extends VerticalLayout {
         //if daySchedule doesn't exist, create one
         if (!scheduleManager.dayExists(date)) {
             scheduleManager.addDay(date);
-            daySchedule = scheduleManager.getDay(date);
+            
         }
+        daySchedule = scheduleManager.getDay(date);
         
         Dialog addEventDialog = new Dialog();
         Button addEventButton = new Button("Add Event",e -> addEventDialog.open());
@@ -94,31 +97,71 @@ public class ScheduleView extends VerticalLayout {
         datePicker.setValue(LocalDate.now());
         datePicker.addValueChangeListener(e -> {
             date = e.getValue();
-            daySchedule = scheduleManager.getDay(date);
-            if (daySchedule == null) {
+            if (!scheduleManager.dayExists(date)) {
                 scheduleManager.addDay(date);
             }
+            daySchedule = scheduleManager.getDay(date);
             updateGrid();
         });
-        add(new HorizontalLayout(addEventButton,datePicker));
+
+        Button resetButton = new Button("Reset",e -> {
+            scheduleManager.resetDay(date);
+            updateGrid();
+        });
+
+        Button defaultButton = new Button("Default",e -> {
+            if (e.getSource().getText().equals("Default")) {
+                back = date;
+                date = LocalDate.of(2000,1,1);
+                datePicker.setValue(date);
+                daySchedule = scheduleManager.getDay(date);
+                e.getSource().setText("Go back");
+                updateGrid();
+            }
+            else {
+                date = back;
+                datePicker.setValue(date);
+                daySchedule = scheduleManager.getDay(date);
+                e.getSource().setText("Default");
+                updateGrid();
+            }
+            
+        });
+        
+        add(new HorizontalLayout(addEventButton,datePicker,resetButton,defaultButton));
         
         scheduleGrid = new Grid<>(Event.class,false);
-        
+        GridContextMenu<Event> contextMenu = scheduleGrid.addContextMenu();
+        contextMenu.addItem("Delete",e -> {
+            if (!e.getItem().isPresent()) {return;}
+            Event selectEvent = this.daySchedule.getFromId(e.getItem().get().getId());
+            daySchedule.deleteEvent(selectEvent);
+            updateGrid();
+
+        });
         scheduleGrid.addComponentColumn(event -> {
-            RadioButtonGroup<String> radioButton = new RadioButtonGroup<>();
-            radioButton.setItems("");
+            Checkbox checkBox = new Checkbox();
             if (event.getDoing()) {
-                radioButton.setValue("");
+                checkBox.setValue(true);
             }
-            radioButton.addValueChangeListener(e -> {
+            if (!date.isEqual(LocalDate.now())) {
+                checkBox.setReadOnly(true);
+            }
+            
+            checkBox.addValueChangeListener(e -> {
                 for (Event ev: daySchedule.getEvents()) {
+                    if (ev.getDoing()) {
+                        ev.setTimeSpent(ev.getTimeSpent().plus(Duration.between(ev.getDoingStart(), LocalDateTime.now())));
+                    }
                     ev.setDoing(false);
                 }
-                event.setDoing(true);
+                
+                event.setDoing(e.getValue());
+                event.setDoingStart(LocalDateTime.now());
                 updateGrid();
             });
             
-            return radioButton;
+            return checkBox;
         }).setKey("doing").setHeader("Doing");
         scheduleGrid.addColumn(event -> {
             return String.format("%s-%s",event.getStartTime(),event.getEndTime());
@@ -127,7 +170,7 @@ public class ScheduleView extends VerticalLayout {
         scheduleGrid.addColumn(e -> {
             return e.getTimeSpentString();
         }).setHeader("Time Spent").setKey("timeSpent");
-        
+        scheduleGrid.addColumn(Event::getEstimatedTime).setHeader("Estimated Time").setKey("estTime");
         updateGrid();
         add(scheduleGrid);
         
@@ -170,10 +213,12 @@ public class ScheduleView extends VerticalLayout {
         TimePicker startField = new TimePicker("Start Time");
         TimePicker endField = new TimePicker("End Time");
         TextField nameField = new TextField("Name");
+        NumberField estTimeField = new NumberField("Estimated Time");
         if (event != null) {
             startField.setValue(event.getStartTime());
             endField.setValue(event.getEndTime());
             nameField.setValue(event.getName());
+            estTimeField.setValue((double) event.getEstimatedTime());
         }
         Dialog selectTaskDialog = new Dialog();
         Button selectTaskButton = new Button("Select Task",e -> selectTaskDialog.open());
@@ -181,11 +226,12 @@ public class ScheduleView extends VerticalLayout {
         selectTaskDialog.addDialogCloseActionListener(e -> {
             if (selectTask != null) {
                 nameField.setValue(selectTask.getName());
+                estTimeField.setValue((double) selectTask.getEstimatedTime());
             }
         });
 
 
-        HorizontalLayout nameLayout = new HorizontalLayout(selectTaskButton,new H4("Or"),nameField);
+        HorizontalLayout nameLayout = new HorizontalLayout(selectTaskButton,new H4("Or"),nameField,estTimeField);
         nameLayout.setAlignItems(Alignment.CENTER);
         
         
@@ -201,6 +247,9 @@ public class ScheduleView extends VerticalLayout {
             else if (startField.getValue().compareTo(endField.getValue()) > 0 || startField.getValue() == endField.getValue()) {
                 error = "Start time cannot be same or later than end time";
             }
+            else if (daySchedule.timeFree(startField.getValue(),endField.getValue()) != null) {
+                error = "Times overlap with existing events!";
+            }
             
 
 
@@ -211,10 +260,15 @@ public class ScheduleView extends VerticalLayout {
                 return;
             }
 
+            if (estTimeField.getValue() == null) {
+                estTimeField.setValue(0.0);
+            }
+
             Event newEvent = new Event();
             newEvent.setName(selectTask != null ? selectTask.getName() : nameField.getValue());
             newEvent.setStartTime(startField.getValue());
             newEvent.setEndTime(endField.getValue());
+            newEvent.setEstimatedTime((int) Math.round(estTimeField.getValue()));
             newEvent.setTask(selectTask);
             newEvent.setDoing(false);
 
