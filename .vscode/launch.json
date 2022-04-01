@@ -14,14 +14,14 @@
             "type": "java",
             "name": "Launch Application",
             "request": "launch",
-            "mainClass": "com.example.application.Application",
+            "mainClass": "application.Application",
             "projectName": "flowcrmtutorial"
         },
         {
             "type": "java",
             "name": "Launch Main",
             "request": "launch",
-            "mainClass": "com.example.application.views.code.Main",
+            "mainClass": "application.views.code.Main",
             "projectName": "flowcrmtutorial"
         }
     ]

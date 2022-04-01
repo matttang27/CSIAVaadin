@@ -2,16 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- Project from https://start.vaadin.com/ -->
-    <groupId>com.example.application</groupId>
+    <groupId>application</groupId>
     <artifactId>flowcrmtutorial</artifactId>
     <name>Flow CRM Tutorial</name>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <vaadin.version>14.8.4</vaadin.version>
-        <start-class>com.example.application</start-class>
     </properties>
 
     <parent>

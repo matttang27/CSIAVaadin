@@ -1,0 +1,16 @@
+- name: String
+- created: LocalDateTime
+- lastEdited: LocalDateTime
+- nextDue: LocalDateTime
+- cronJob: String
+- priority: int
+- done: boolean
+- color: Color
+- background: String
+- icon: String
+- parent: null or Task
+- subTasks: arrayList<Task>
+- description: String
+- group: Group
+- history: arrayList<Complete>
+- id: int
