@@ -1,4 +1,4 @@
-package com.example.application.views.code;
+package application.views.code;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,8 +27,8 @@ public class FireBaseAuth {
     }
 
     public static FireBaseAuth getInstance() {
-      if(instance == null) {
-         instance = new FireBaseAuth();
+      if (instance == null) {
+        instance = new FireBaseAuth();
       }
       return instance;
     }

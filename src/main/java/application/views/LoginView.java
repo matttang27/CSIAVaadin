@@ -1,4 +1,4 @@
-package com.example.application.views;
+package application.views;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import com.example.application.views.code.*;
+import application.views.code.*;
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Blob;
@@ -69,21 +69,19 @@ public class LoginView extends VerticalLayout {
 
         FileInputStream serviceAccount;
         try {
-            serviceAccount = new FileInputStream("src/main/java/com/example/application/key.json");
+            serviceAccount = new FileInputStream("src/main/java/application/key.json");
             FirebaseOptions options = new FirebaseOptions.Builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount))
             .build();
-            if (FirebaseApp.getInstance() == null) {
-                FirebaseApp.initializeApp(options);
-            }
+            FirebaseApp.initializeApp(options);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        catch (IllegalStateException e2) {
+            System.out.println("Already has FirebaseApp instance!");
+        }
             
-        }
-        catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        
         
         FirebaseAuth instance = FirebaseAuth.getInstance();
             
@@ -119,7 +117,7 @@ public class LoginView extends VerticalLayout {
 
             if (login) {
                 loginForm.setEnabled(true);
-
+                
                 FireBaseAuth auth = FireBaseAuth.getInstance();
                 try {
                     String token = auth.auth(u, p);
@@ -140,7 +138,8 @@ public class LoginView extends VerticalLayout {
                     DocumentSnapshot document = future.get();
                     if (document.exists()) {
                         Map<String,Object> userDocument = document.getData();
-                        byte[] importData = (byte[]) userDocument.get("data");
+                        
+                        byte[] importData = document.getBlob("data").toBytes();
                         System.out.println("Document data: " + document.getData());
                         try {
                             ByteArrayInputStream bis = new ByteArrayInputStream(importData);
