@@ -34,6 +34,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
@@ -57,6 +58,7 @@ import com.vaadin.flow.component.ComponentUtil;
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("tasks")
 @Route(value = "tasks")
+
 public class TaskView extends VerticalLayout {
     private User user;
     private Manager manager;
@@ -82,10 +84,13 @@ public class TaskView extends VerticalLayout {
         Component c = UI.getCurrent();
         manager = (Manager) ComponentUtil.getData(c,"manager");
         if (manager == null) {
-            manager = new Manager();
-            manager.setUser(new User("Matthew"));
+            UI.getCurrent().navigate("login");
         }
-
+        else {
+            setup();
+        }
+    }
+    public void setup() {
         user = manager.getUser();
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();

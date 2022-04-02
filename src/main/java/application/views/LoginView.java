@@ -52,6 +52,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
@@ -63,6 +64,7 @@ import com.vaadin.flow.component.textfield.*;
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("login")
 @Route(value = "login")
+
 public class LoginView extends VerticalLayout {
     private boolean login = true;
     public LoginView() {
@@ -102,7 +104,7 @@ public class LoginView extends VerticalLayout {
         loginForm.setForgotPasswordButtonVisible(false);
         add(loginForm);
         loginForm.addLoginListener(listener -> {
-            
+            loginForm.setEnabled(true);
 
 
             String u = listener.getUsername();
@@ -111,7 +113,7 @@ public class LoginView extends VerticalLayout {
             if (p.length() < 6) {
                 Notification notif = Notification.show("Password must be at least 6 characters long");
                 notif.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                loginForm.setEnabled(true);
+                
                 return;
             }
 
@@ -147,6 +149,12 @@ public class LoginView extends VerticalLayout {
                             try {
                                 in = new ObjectInputStream(bis);
                                 Manager manager = (Manager) in.readObject();
+                                getUI().ifPresent(ui -> {
+                                    Component c = ui.getCurrent();
+                                    ComponentUtil.setData(c,"manager",manager);
+                                    ui.navigate("tasks");
+                                    
+                                });
                             } catch (ClassNotFoundException e) {
                                 e.printStackTrace();
                             } finally {
@@ -176,37 +184,20 @@ public class LoginView extends VerticalLayout {
                 try {
                     instance.createUser(newUser);
                     String uId = instance.getUserByEmail(u).getUid();
-                    Firestore db = FirestoreClient.getFirestore();
-                    DocumentReference docRef = db.collection("users").document(uId);
-                    ApiFuture<DocumentSnapshot> future = docRef.get();
-                    DocumentSnapshot document = future.get();
-                    HashMap<String,Object> putData = new HashMap<String,Object>();
 
                     Manager manager = new Manager();
-                    
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    ObjectOutputStream oos;
-                    try {
-                        oos = new ObjectOutputStream(bos);
-                        oos.writeObject(manager);
-                        oos.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    byte[] byteArray = bos.toByteArray();
-                    
-                    
-
-                    putData.put("data",Blob.fromBytes(byteArray));
-
-                    ApiFuture<WriteResult> writeFuture = docRef.set(putData);
+                    manager.setUid(uId);
+                    manager.save();
                     Notification notif = Notification.show("Account has been created!");
                     notif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                } catch (FirebaseAuthException | InterruptedException | ExecutionException e1) {
+                } catch (FirebaseAuthException e1) {
                     Notification notif = Notification.show("Email already has a registered account");
                     notif.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
 
+                } catch (IOException e1) {
+                    Notification notif = Notification.show("Registration failed.");
+                    notif.addThemeVariants(NotificationVariant.LUMO_ERROR);
                 }
             }
             

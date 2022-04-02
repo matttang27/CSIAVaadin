@@ -1,5 +1,7 @@
 package application.views.code;
 
+import java.io.IOException;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
@@ -20,6 +22,11 @@ public class NavTab extends Tabs {
             String tabName = tab.getLabel();
             
             getUI().ifPresent(ui -> {
+                try {
+                    manager.save();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Component c = ui.getCurrent();
                 ComponentUtil.setData(c,"manager",this.manager);
                 ui.navigate(tabName.toLowerCase());

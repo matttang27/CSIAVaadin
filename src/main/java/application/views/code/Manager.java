@@ -1,10 +1,26 @@
 package application.views.code;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.Blob;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
+import com.google.firebase.cloud.FirestoreClient;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
 public class Manager implements Serializable {
 
-
-    //currently this is so that everything can be connected to one spot, but not sure if I really need that
+    // currently this is so that everything can be connected to one spot, but not
+    // sure if I really need that
     private TaskManager tasker;
     private GroupManager grouper;
     private StatManager stater;
@@ -12,6 +28,36 @@ public class Manager implements Serializable {
     private StatManager stats;
     private SettingsManager settings;
     private ScheduleManager scheduler;
+    private String uid;
+
+    public void save() throws IOException {
+        Firestore db = FirestoreClient.getFirestore();
+        DocumentReference docRef = db.collection("users").document(this.uid);
+        HashMap<String, Object> putData = new HashMap<String, Object>();
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos;
+        oos = new ObjectOutputStream(bos);
+        oos.writeObject(this);
+        oos.flush();
+        
+        byte[] byteArray = bos.toByteArray();
+
+        putData.put("data", Blob.fromBytes(byteArray));
+
+        ApiFuture<WriteResult> writeFuture = docRef.set(putData);
+    }
+    public void setScheduler(ScheduleManager scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    public String getUid() {
+        return this.uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public SettingsManager getSettings() {
         return this.settings;
@@ -35,8 +81,9 @@ public class Manager implements Serializable {
 
     public void setSchedule(ScheduleManager scheduler) {
         this.scheduler = scheduler;
-        
+
     }
+
     public Manager() {
         tasker = new TaskManager(this);
         grouper = new GroupManager(this);
@@ -60,12 +107,12 @@ public class Manager implements Serializable {
     public void setTasker(TaskManager tasker) {
         this.tasker = tasker;
     }
-    
+
     @Override
     public String toString() {
         return "{" +
-            " tasker='" + getTasker() + "'" +
-            "}";
+                " tasker='" + getTasker() + "'" +
+                "}";
     }
 
     public StatManager getStater() {

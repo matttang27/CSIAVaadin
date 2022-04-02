@@ -44,6 +44,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
@@ -55,6 +56,7 @@ import com.vaadin.flow.component.textfield.*;
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("Home")
 @Route(value = "")
+
 public class HomeView extends VerticalLayout {
     
     public HomeView() {

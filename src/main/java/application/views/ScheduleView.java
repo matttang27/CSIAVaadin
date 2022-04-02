@@ -30,6 +30,7 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
@@ -49,6 +50,7 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("Schedule")
 @Route(value = "schedule")
+
 public class ScheduleView extends VerticalLayout {
     private Manager manager;
     private TaskManager taskManager;
@@ -69,10 +71,13 @@ public class ScheduleView extends VerticalLayout {
         Component c = UI.getCurrent();
         manager = (Manager) ComponentUtil.getData(c,"manager");
         if (manager == null) {
-            manager = new Manager();
-            manager.setUser(new User("Matthew"));
+            UI.getCurrent().navigate("login");
         }
-
+        else {
+            setup();
+        }
+    }
+    public void setup() {
         user = manager.getUser();
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
