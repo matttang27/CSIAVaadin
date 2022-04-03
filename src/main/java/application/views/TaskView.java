@@ -60,6 +60,7 @@ import com.vaadin.flow.component.ComponentUtil;
 @Route(value = "tasks")
 
 public class TaskView extends VerticalLayout {
+    
     private User user;
     private Manager manager;
     private TaskManager taskManager;

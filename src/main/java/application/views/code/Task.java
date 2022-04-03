@@ -12,6 +12,8 @@ import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 public class Task implements Serializable {
+private static final long serialVersionUID = 1L;
+    
     private String name;
     private LocalDateTime created;
     private LocalDateTime lastEdited;

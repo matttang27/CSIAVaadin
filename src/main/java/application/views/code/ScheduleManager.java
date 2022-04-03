@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ScheduleManager implements Serializable {
+private static final long serialVersionUID = 1L;
+    
     private HashMap<LocalDate,DaySchedule> days;
     private Manager manager;
     private LocalDate DEFAULT = LocalDate.of(2000, 1, 1);

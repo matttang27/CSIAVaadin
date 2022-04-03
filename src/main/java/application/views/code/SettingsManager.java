@@ -3,6 +3,8 @@ package application.views.code;
 import java.io.Serializable;
 
 public class SettingsManager implements Serializable {
+private static final long serialVersionUID = 1L;
+    
     private double scoreA;
     private double scoreB;
     private double scoreC;

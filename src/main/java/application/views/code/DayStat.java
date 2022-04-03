@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 public class DayStat implements Serializable {
+    private static final long serialVersionUID = 1L;
     private LocalDate day;
     private DaySchedule daySchedule;
     private int tasksCompleted = 0;
@@ -16,7 +17,6 @@ public class DayStat implements Serializable {
     public void setDaySchedule(DaySchedule daySchedule) {
         this.daySchedule = daySchedule;
     }
-
 
     public DayStat(LocalDate day) {
         this.day = day;
@@ -35,7 +35,6 @@ public class DayStat implements Serializable {
     public void setDay(LocalDate day) {
         this.day = day;
 
-    
     }
 
     public int getTasksCompleted() {

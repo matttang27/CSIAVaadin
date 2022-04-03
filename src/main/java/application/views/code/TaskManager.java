@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class TaskManager implements Serializable {
+private static final long serialVersionUID = 1L;
+    
     ArrayList<Task> tasks;
     Manager manager;
 
@@ -102,8 +104,27 @@ public class TaskManager implements Serializable {
      * }
      */
 
+    public Task highestPriority() {
+        Task highTask = tasks.get(0);
+        double highScore = 0;
+        SettingsManager settings = this.manager.getSettings();
+        double a = settings.getScoreA();
+        double b = settings.getScoreB();
+        double c = settings.getScoreC();
 
-    ArrayList<Task> sort(ArrayList<Task> tasks, String sortType, Boolean ascending) {
+        //note that there is no need to check for whether tasks are done
+        //because done tasks are automatically set to 0
+        //good job Matthew!
+        for (Task t: tasks) {
+            if (t.calculateScore(a,b,c) > highScore) {
+                highTask = t;
+                highScore = t.calculateScore(a,b,c);
+            }
+        }
+        return highTask;
+    }
+
+    public ArrayList<Task> sort(ArrayList<Task> tasks, String sortType, Boolean ascending) {
         ArrayList<Task> sorted = tasks;
 
 
@@ -120,7 +141,7 @@ public class TaskManager implements Serializable {
             flag = false;
 
             for (int j=0;j<tasks.size()-1;j++) {
-                System.out.println(String.format("%d,%d",i,j));
+                
                 boolean greater = false;
                 if (sortType == "taskName") {
                     greater = tasks.get(j).getName().compareToIgnoreCase(tasks.get(j+1).getName()) > 0;
@@ -246,7 +267,7 @@ public class TaskManager implements Serializable {
         newTasks = this.sort(newTasks,sort,ascending);
 
         //2. boolean filters: (this will turn into a normal filter if i have the time)
-        if (booleans[0]) {
+        if (!booleans[0]) {
             newTasks = this.removeDone(newTasks);
         }
 

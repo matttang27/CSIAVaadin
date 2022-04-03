@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class StatManager implements Serializable {
+private static final long serialVersionUID = 1L;
+    
     private HashMap<LocalDate,DayStat> data;
     private Manager manager;
     public StatManager(Manager manager) {

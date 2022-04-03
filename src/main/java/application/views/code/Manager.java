@@ -17,10 +17,11 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+//The big boy - Root Manager
 public class Manager implements Serializable {
+private static final long serialVersionUID = 1L;
+    
 
-    // currently this is so that everything can be connected to one spot, but not
-    // sure if I really need that
     private TaskManager tasker;
     private GroupManager grouper;
     private StatManager stater;
@@ -123,12 +124,5 @@ public class Manager implements Serializable {
         this.stater = stater;
     }
 
-    public StatManager getStats() {
-        return this.stats;
-    }
-
-    public void setStats(StatManager stats) {
-        this.stats = stats;
-    }
-
+    
 }

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import com.vaadin.flow.component.icon.Icon;
 
 public class Group implements Serializable {
+private static final long serialVersionUID = 1L;
+    
     private String name = "";
     private ArrayList<Task> tasks = new ArrayList<Task>();
     private LocalDateTime created = LocalDateTime.now();

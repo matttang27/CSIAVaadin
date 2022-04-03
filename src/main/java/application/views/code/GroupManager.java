@@ -1,8 +1,12 @@
 package application.views.code;
 import java.util.ArrayList;
-//honestly I'm not sure if I even need a GroupManager
+
 import java.io.Serializable;
+
+//Manages the groups of the Application
 public class GroupManager implements Serializable {
+private static final long serialVersionUID = 1L;
+    
     ArrayList<Group> groups;
     Manager manager;
     public GroupManager(Manager manager) {

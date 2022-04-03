@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class User implements Serializable {
+private static final long serialVersionUID = 1L;
     String name;
     //Image icon - will be implemented in actual app
     LocalDate birthday;

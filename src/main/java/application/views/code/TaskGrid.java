@@ -20,6 +20,7 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -61,6 +62,14 @@ public class TaskGrid{
 
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    private Icon createIcon(VaadinIcon vaadinIcon) {
+        Icon icon = vaadinIcon.create();
+        icon.getStyle()
+                .set("padding", "var(--lumo-space-xs")
+                .set("box-sizing", "border-box");
+        return icon;
+    }
+
     public TaskGrid(Grid<Task> grid, Manager manager, FullCalendar calendar) {
         this.grid = grid;
         this.manager = manager;
@@ -95,7 +104,30 @@ public class TaskGrid{
 
                     return checkBox;
                 }).setFrozen(true).setKey("done").setHeader("Done");
-
+        grid.addComponentColumn(task -> {
+            if (task.getDone()) {
+                Span span = new Span(createIcon(VaadinIcon.CHECK), new Span("Done"));
+                span.getElement().getThemeList().add("badge success");
+                return span;
+            }
+            else if (taskManager.highestPriority().getId() == task.getId()) {
+                Span span = new Span(createIcon(VaadinIcon.BELL), new Span("Priority"));
+                span.getElement().getThemeList().add("badge");
+                span.getStyle().set("color","#ff9600");
+                span.getStyle().set("background-color","#ffe6a1");
+                return span;
+            }
+            else if (task.getNextDue().isBefore(LocalDateTime.now())) {
+                Span span = new Span(createIcon(VaadinIcon.EXCLAMATION_CIRCLE_O), new Span("Overdue"));
+                span.getElement().getThemeList().add("badge error");
+                return span;
+            }
+            else {
+                Span span = new Span("To-Do");
+                span.getElement().getThemeList().add("badge contrast");
+                return span;
+            }
+        });
         grid.addColumn(Task::getName).setHeader("Name").setKey("name");
         // DONE: Change getNextDue format (preferably without an entire new function)
         grid.addColumn(t -> {

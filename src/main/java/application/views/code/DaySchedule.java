@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 
 public class DaySchedule implements Serializable {
+private static final long serialVersionUID = 1L;
     private LocalDate day;
     private DayStat dayStat;
     private ArrayList<Event> events = new ArrayList<Event>();
