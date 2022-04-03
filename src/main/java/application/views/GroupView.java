@@ -155,7 +155,7 @@ public class GroupView extends VerticalLayout {
 
         Div titlePart = new Div();
         titlePart.getStyle().set("display", "inline-block");
-        if (group.getIcon() != null) {
+        if (group.getIcon() != "") {
             titlePart.add(icons.get(group.getIcon()));
         }
         titlePart.add(title);
@@ -236,7 +236,7 @@ public class GroupView extends VerticalLayout {
 
             newGroup.setLastEdited(LocalDateTime.now());
             newGroup.setColor(colorPicker.getValue());
-            newGroup.setIcon(selectIcon.getValue().getElement().getAttribute("icon"));
+            newGroup.setIcon(selectIcon.getValue() == null ? "" : selectIcon.getValue().getElement().getAttribute("icon"));
             newGroup.setGoal(goalField.getValue().intValue());
             groupManager.addGroup(newGroup);
 
@@ -339,7 +339,7 @@ public class GroupView extends VerticalLayout {
             group.setName(nameField.getValue());
             group.setLastEdited(LocalDateTime.now());
             group.setColor(colorPicker.getValue());
-            group.setIcon(selectIcon.getValue().getElement().getAttribute("icon"));
+            group.setIcon(selectIcon.getValue() == null ? "" : selectIcon.getValue().getElement().getAttribute("icon"));
             group.setNotes(notesField.getValue());
 
             PopulateBoard();

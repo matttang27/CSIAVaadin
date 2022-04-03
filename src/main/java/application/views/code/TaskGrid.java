@@ -144,7 +144,7 @@ public class TaskGrid{
                     HorizontalLayout div = new HorizontalLayout();
                     if (task.getGroup() != null) {
 
-                        if (task.getGroup().getIcon() != null) {
+                        if (task.getGroup().getIcon() != "") {
                             div.add(icons.get(task.getGroup().getIcon()));
                         }
                         Div colorDiv = new Div();
@@ -261,7 +261,7 @@ public class TaskGrid{
 
         Checkbox showDone = new Checkbox();
         showDone.setLabel("Show Done");
-
+        showDone.setValue(showDoneB);
         showDone.addClickListener(e -> {
             setShowDoneB(e.getSource().getValue());
             updateGrid();
