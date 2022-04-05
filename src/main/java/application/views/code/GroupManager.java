@@ -2,6 +2,7 @@ package application.views.code;
 import java.util.ArrayList;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 //Manages the groups of the Application
 public class GroupManager implements Serializable {
@@ -59,6 +60,23 @@ private static final long serialVersionUID = 1L;
         }
         
         return null;
+    }
+
+    public int getStatus(Group group) {
+        
+        //check status of group
+        //0: Done, 1: Todo, 2: Overdue
+        int status = 0;
+        for (Task t: manager.getTasker().getTasks()) {
+            
+            if (!t.getDone() && t.getNextDue().isBefore(LocalDateTime.now()) && t.getGroup() == group) {
+                return 2;
+            }
+            else if (!t.getDone() && status < 1 && t.getGroup() == group) {
+                status = 1;
+            }
+        }
+        return status;
     }
     
 

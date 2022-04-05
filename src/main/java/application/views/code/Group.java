@@ -10,7 +10,6 @@ public class Group implements Serializable {
 private static final long serialVersionUID = 1L;
     
     private String name = "";
-    private ArrayList<Task> tasks = new ArrayList<Task>();
     private LocalDateTime created = LocalDateTime.now();
     private LocalDateTime lastEdited = LocalDateTime.now();
     //optional
@@ -19,6 +18,23 @@ private static final long serialVersionUID = 1L;
     private int id;
     private String icon;
     private String notes = "";
+
+    public Group() {
+    }
+
+    public Group(String name) {
+        this.name = name;
+        this.created = LocalDateTime.now();
+        this.lastEdited = LocalDateTime.now();
+    }
+
+    public Group(String name, LocalDateTime created, LocalDateTime lastEdited, int goal, String color) {
+        this.name = name;
+        this.created = created;
+        this.lastEdited = lastEdited;
+        this.goal = goal;
+        this.color = color;
+    }
 
     public String getNotes() {
         return this.notes;
@@ -55,23 +71,8 @@ private static final long serialVersionUID = 1L;
         this.id = id;
     }
 
-    public Group() {
-    }
-
-    public Group(String name) {
-        this.name = name;
-        this.created = LocalDateTime.now();
-        this.lastEdited = LocalDateTime.now();
-    }
-
-    public Group(String name, ArrayList<Task> tasks, LocalDateTime created, LocalDateTime lastEdited, int goal, String color) {
-        this.name = name;
-        this.tasks = tasks;
-        this.created = created;
-        this.lastEdited = lastEdited;
-        this.goal = goal;
-        this.color = color;
-    }
+    
+    
     
     public LocalDateTime getLastEdited() {
         return this.lastEdited;
@@ -95,14 +96,6 @@ private static final long serialVersionUID = 1L;
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public ArrayList<Task> getTasks() {
-        return this.tasks;
-    }
-
-    public void setTasks(ArrayList<Task> tasks) {
-        this.tasks = tasks;
     }
 
     public LocalDateTime getCreated() {

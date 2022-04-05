@@ -150,7 +150,23 @@ public class GroupView extends VerticalLayout {
 
         H3 title = new H3(group.getName());
 
-        Span pending = new Span("Doing");
+        Span pending = new Span();
+        int status = groupManager.getStatus(group);
+        switch (status) {
+            case 0:
+                pending = new Span(createIcon(VaadinIcon.CHECK), new Span("Done"));
+                pending.getElement().getThemeList().add("badge success");
+                break;
+            case 1:
+                pending = new Span(createIcon(VaadinIcon.EXCLAMATION_CIRCLE_O), new Span("Overdue"));
+                pending.getElement().getThemeList().add("badge error");
+                break;
+            case 2:
+                Span span = new Span(createIcon(VaadinIcon.COG), new Span("To-Do"));
+                span.getElement().getThemeList().add("badge contrast");
+                break;
+        }
+
         pending.getElement().getThemeList().add("badge");
 
         Div titlePart = new Div();
@@ -236,7 +252,8 @@ public class GroupView extends VerticalLayout {
 
             newGroup.setLastEdited(LocalDateTime.now());
             newGroup.setColor(colorPicker.getValue());
-            newGroup.setIcon(selectIcon.getValue() == null ? "" : selectIcon.getValue().getElement().getAttribute("icon"));
+            newGroup.setIcon(
+                    selectIcon.getValue() == null ? "" : selectIcon.getValue().getElement().getAttribute("icon"));
             newGroup.setGoal(goalField.getValue().intValue());
             groupManager.addGroup(newGroup);
 
@@ -357,6 +374,14 @@ public class GroupView extends VerticalLayout {
         VerticalLayout dialogLayout = new VerticalLayout(finalLayout, buttonLayout);
 
         return dialogLayout;
+    }
+
+    private Icon createIcon(VaadinIcon vaadinIcon) {
+        Icon icon = vaadinIcon.create();
+        icon.getStyle()
+                .set("padding", "var(--lumo-space-xs")
+                .set("box-sizing", "border-box");
+        return icon;
     }
 
 }

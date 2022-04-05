@@ -123,11 +123,11 @@ public class TaskGrid{
                 return span;
             }
             else {
-                Span span = new Span("To-Do");
+                Span span = new Span(createIcon(VaadinIcon.COG), new Span("To-do"));
                 span.getElement().getThemeList().add("badge contrast");
                 return span;
             }
-        });
+        }).setHeader("Status").setKey("status");
         grid.addColumn(Task::getName).setHeader("Name").setKey("name");
         // DONE: Change getNextDue format (preferably without an entire new function)
         grid.addColumn(t -> {
