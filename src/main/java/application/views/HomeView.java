@@ -63,7 +63,7 @@ public class HomeView extends VerticalLayout {
 
         Button loginButton = new Button("Login",e-> {e.getSource().getUI().get().navigate("login");});
         
-        Button signUpButton = new Button("Sign Up", e-> {e.getSource().getUI().get().navigate("login");});
+        Button signUpButton = new Button("Sign Up", e-> {e.getSource().getUI().get().navigate("login/signup");});
         HorizontalLayout enterButtons = new HorizontalLayout(loginButton,signUpButton);
         enterButtons.setWidthFull();
         enterButtons.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
@@ -78,7 +78,10 @@ public class HomeView extends VerticalLayout {
         
         H1 subtitle = new H1("Your personal task management program.");
         subtitle.getStyle().set("color","#474747");
-        VerticalLayout titlePart = new VerticalLayout(enterButtons,titleBackground,subtitle);
+        H1 author = new H1("By Matthew Tang");
+        author.getStyle().set("color","grey").set("font-size","40px");
+        
+        VerticalLayout titlePart = new VerticalLayout(enterButtons,titleBackground,subtitle,author);
         titlePart.setAlignItems(FlexComponent.Alignment.CENTER);
         add(titlePart);
 

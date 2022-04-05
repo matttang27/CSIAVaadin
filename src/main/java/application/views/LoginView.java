@@ -51,6 +51,9 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
@@ -65,10 +68,29 @@ import com.vaadin.flow.component.textfield.*;
 @PageTitle("login")
 @Route(value = "login")
 
-public class LoginView extends VerticalLayout {
+public class LoginView extends VerticalLayout implements HasUrlParameter<String> {
     private boolean login = true;
+
+    @Override
+    public void setParameter(BeforeEvent event,
+            @OptionalParameter String parameter) {
+        if (parameter == null || !parameter.equals("signup")) {
+            this.login = true;
+            setup();
+        }
+        else {
+            this.login = false;
+            setup();
+        }
+    }
     public LoginView() {
 
+        
+        
+        
+
+    }
+    public void setup() {
         FileInputStream serviceAccount;
         try {
             serviceAccount = new FileInputStream("src/main/java/application/key.json");
@@ -204,7 +226,9 @@ public class LoginView extends VerticalLayout {
         });
 
         Button signUp = new Button("Sign up");
-        
+        if (!login) {
+            signUp.setText("Login");
+        }
         signUp.addClickListener(e -> {
             if (login) {
                 i18nForm.setTitle("Sign up");
@@ -226,8 +250,5 @@ public class LoginView extends VerticalLayout {
         });
 
         add(signUp);
-        
-        
-
     }
 }

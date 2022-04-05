@@ -193,7 +193,7 @@ public class ScheduleView extends VerticalLayout {
         scheduleGrid.setItems(scheduleManager.getDay(date).getEvents());
     }
 
-    private VerticalLayout selectTaskLayout(Dialog dialog) {
+    private VerticalLayout selectTaskLayout(Dialog dialog, TextField nameField, NumberField estTimeField) {
         dialog.setWidth("50%");
         H2 title = new H2("Select task:");
         Grid<Task> grid = new Grid<>(Task.class,false);
@@ -206,6 +206,8 @@ public class ScheduleView extends VerticalLayout {
         contextMenu.addItem("Select", e -> {
             if (e.getItem().isPresent()) {
                 selectTask = e.getItem().get();
+                nameField.setValue(selectTask.getName());
+                estTimeField.setValue((double) selectTask.getEstimatedTime());
                 dialog.close();
             }
         });
@@ -231,7 +233,7 @@ public class ScheduleView extends VerticalLayout {
         }
         Dialog selectTaskDialog = new Dialog();
         Button selectTaskButton = new Button("Select Task",e -> selectTaskDialog.open());
-        selectTaskDialog.add(selectTaskLayout(selectTaskDialog));
+        selectTaskDialog.add(selectTaskLayout(selectTaskDialog,nameField,estTimeField));
         selectTaskDialog.addDialogCloseActionListener(e -> {
             if (selectTask != null) {
                 nameField.setValue(selectTask.getName());
