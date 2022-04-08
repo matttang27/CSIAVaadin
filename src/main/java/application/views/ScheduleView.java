@@ -136,6 +136,7 @@ public class ScheduleView extends VerticalLayout {
         add(new HorizontalLayout(addEventButton,datePicker,resetButton,defaultButton));
         
         scheduleGrid = new Grid<>(Event.class,false);
+        
         GridContextMenu<Event> contextMenu = scheduleGrid.addContextMenu();
         contextMenu.addItem("Delete",e -> {
             if (!e.getItem().isPresent()) {return;}
@@ -202,6 +203,8 @@ public class ScheduleView extends VerticalLayout {
         taskGrid.setSortType("taskScore");
         taskGrid.setAscending(false);
         taskGrid.updateGrid();
+        grid.getColumnByKey("done").setVisible(false);
+        
         GridContextMenu<Task> contextMenu = grid.addContextMenu();
         contextMenu.addItem("Select", e -> {
             if (e.getItem().isPresent()) {

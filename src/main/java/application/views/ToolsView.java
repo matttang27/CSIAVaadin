@@ -75,6 +75,7 @@ public class ToolsView extends VerticalLayout {
         Button exportButton = new Button("Export");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos;
+        
         try {
             oos = new ObjectOutputStream(bos);
             oos.writeObject(manager);

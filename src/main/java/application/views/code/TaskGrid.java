@@ -169,6 +169,9 @@ public class TaskGrid{
             return score;
         }).setHeader("Task Score").setKey("score");
         grid.setItems(taskManager.getTasks());
+
+        updateCalendar();
+        updateGrid();
     }
 
     public void updateGrid() {
