@@ -57,9 +57,11 @@ public class ToolsView extends VerticalLayout {
         Component c = UI.getCurrent();
         manager = (Manager) ComponentUtil.getData(c,"manager");
         if (manager == null) {
-            UI.getCurrent().navigate("login");
-        }
-        else {
+
+            UI ui = UI.getCurrent();
+            ui.navigate("");
+            ui.getPage().reload();
+        } else {
             setup();
         }
     }
@@ -75,7 +77,7 @@ public class ToolsView extends VerticalLayout {
         Button exportButton = new Button("Export");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos;
-        
+
         try {
             oos = new ObjectOutputStream(bos);
             oos.writeObject(manager);

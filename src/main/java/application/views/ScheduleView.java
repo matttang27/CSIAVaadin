@@ -71,9 +71,11 @@ public class ScheduleView extends VerticalLayout {
         Component c = UI.getCurrent();
         manager = (Manager) ComponentUtil.getData(c,"manager");
         if (manager == null) {
-            UI.getCurrent().navigate("login");
-        }
-        else {
+
+            UI ui = UI.getCurrent();
+            ui.navigate("");
+            ui.getPage().reload();
+        } else {
             setup();
         }
     }
@@ -148,6 +150,13 @@ public class ScheduleView extends VerticalLayout {
             updateGrid();
             updateGrid();
 
+        });
+        contextMenu.addItem("View",e -> {
+            if (!e.getItem().isPresent()) {return;}
+            Event selectEvent = this.daySchedule.getFromId(e.getItem().get().getId());
+            Dialog itemDialog = new Dialog();
+            itemDialog.add(addEventLayout(itemDialog, selectEvent));
+            itemDialog.open();
         });
         scheduleGrid.addComponentColumn(event -> {
             Checkbox checkBox = new Checkbox();
@@ -278,15 +287,34 @@ public class ScheduleView extends VerticalLayout {
                 estTimeField.setValue(0.0);
             }
 
-            Event newEvent = new Event();
-            newEvent.setName(selectTask != null ? selectTask.getName() : nameField.getValue());
-            newEvent.setStartTime(startField.getValue());
-            newEvent.setEndTime(endField.getValue());
-            newEvent.setEstimatedTime((int) Math.round(estTimeField.getValue()));
-            newEvent.setTask(selectTask);
-            newEvent.setDoing(false);
+            if (event == null) {
+                Event newEvent = new Event();
+                newEvent.setName(selectTask != null ? selectTask.getName() : nameField.getValue());
+                newEvent.setStartTime(startField.getValue());
+                newEvent.setEndTime(endField.getValue());
+                newEvent.setEstimatedTime((int) Math.round(estTimeField.getValue()));
+                newEvent.setTask(selectTask);
+                newEvent.setDoing(false);
 
-            daySchedule.addEvent(newEvent);
+                daySchedule.addEvent(newEvent);
+                Notification selectTaskNotif = Notification.show("Added Event!");
+                selectTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                selectTaskNotif.setDuration(2000);
+            }
+            else {
+                event.setName(selectTask != null ? selectTask.getName() : nameField.getValue());
+                event.setStartTime(startField.getValue());
+                event.setEndTime(endField.getValue());
+                event.setEstimatedTime((int) Math.round(estTimeField.getValue()));
+                event.setTask(selectTask);
+                event.setDoing(false);
+
+                Notification selectTaskNotif = Notification.show("Added Event!");
+                selectTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                selectTaskNotif.setDuration(2000);
+            }
+
+            
 
             updateGrid();
             // TODO: ADD ENTRY CLICK LISTENERS TO CALENDAR
@@ -297,9 +325,7 @@ public class ScheduleView extends VerticalLayout {
             // });
             // calendar.addEntryClickedListener(entryClick);
 
-            Notification selectTaskNotif = Notification.show("Added Event!");
-            selectTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            selectTaskNotif.setDuration(2000);
+            
             dialog.close();
 
         });

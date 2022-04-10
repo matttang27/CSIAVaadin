@@ -66,12 +66,15 @@ public class GroupView extends VerticalLayout {
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public GroupView() {
-
+        
         // import data
         Component c = UI.getCurrent();
         manager = (Manager) ComponentUtil.getData(c, "manager");
         if (manager == null) {
-            UI.getCurrent().navigate("login");
+
+            UI ui = UI.getCurrent();
+            ui.navigate("");
+            ui.getPage().reload();
         } else {
             setup();
         }
