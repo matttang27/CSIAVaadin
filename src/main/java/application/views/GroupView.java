@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import application.views.code.*;
 
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.Text;
@@ -49,6 +50,7 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.textfield.*;
 import java.awt.Color;
+import java.io.IOException;
 
 @Theme(themeFolder = "flowcrmtutorial")
 @PageTitle("Groups")
@@ -64,7 +66,14 @@ public class GroupView extends VerticalLayout {
     public static HashMap<String, Icon> icons = loadIcons();
 
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
+    @ClientCallable
+    public void windowClosed() {
+        try {
+			manager.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
     public GroupView() {
         
         // import data

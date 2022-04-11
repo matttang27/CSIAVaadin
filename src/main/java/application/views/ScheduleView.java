@@ -1,4 +1,5 @@
 package application.views;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,6 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import application.views.code.*;
+
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.Text;
@@ -65,7 +68,16 @@ public class ScheduleView extends VerticalLayout {
     private DaySchedule daySchedule;
     private Task selectTask;
     private LocalDate back = LocalDate.now();
+    @ClientCallable
+    public void windowClosed() {
+        try {
+			manager.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
     public ScheduleView() {
+
 
         //import data
         Component c = UI.getCurrent();
@@ -134,12 +146,26 @@ public class ScheduleView extends VerticalLayout {
             }
             
         });
+
+        Button generateSchedule = new Button("Generate Pomodoros",e -> {
+            Dialog generateDialog = new Dialog();
+            generateDialog.add(generateLayout(generateDialog));
+            generateDialog.open();
+        });
         
-        add(new HorizontalLayout(addEventButton,datePicker,resetButton,defaultButton));
+        add(new HorizontalLayout(addEventButton,datePicker,resetButton,defaultButton,generateSchedule));
         
         scheduleGrid = new Grid<>(Event.class,false);
         
         GridContextMenu<Event> contextMenu = scheduleGrid.addContextMenu();
+        
+        contextMenu.addItem("View",e -> {
+            if (!e.getItem().isPresent()) {return;}
+            Event selectEvent = this.daySchedule.getFromId(e.getItem().get().getId());
+            Dialog itemDialog = new Dialog();
+            itemDialog.add(addEventLayout(itemDialog, selectEvent));
+            itemDialog.open();
+        });
         contextMenu.addItem("Delete",e -> {
             if (!e.getItem().isPresent()) {return;}
             Event selectEvent = this.daySchedule.getFromId(e.getItem().get().getId());
@@ -150,13 +176,6 @@ public class ScheduleView extends VerticalLayout {
             updateGrid();
             updateGrid();
 
-        });
-        contextMenu.addItem("View",e -> {
-            if (!e.getItem().isPresent()) {return;}
-            Event selectEvent = this.daySchedule.getFromId(e.getItem().get().getId());
-            Dialog itemDialog = new Dialog();
-            itemDialog.add(addEventLayout(itemDialog, selectEvent));
-            itemDialog.open();
         });
         scheduleGrid.addComponentColumn(event -> {
             Checkbox checkBox = new Checkbox();
@@ -226,6 +245,37 @@ public class ScheduleView extends VerticalLayout {
         Button cancelButton = new Button("Cancel", e -> dialog.close());
         return new VerticalLayout(title,grid,cancelButton);
 
+    }
+    private VerticalLayout generateLayout(Dialog dialog) {
+        H2 title = new H2("Generate your pomodoro schedule!");
+        NumberField pomodoroField = new NumberField("Maximum Pomodoro's");
+        Button cancelButton = new Button("Cancel", e -> dialog.close());
+        Button saveButton = new Button("Save", e -> {
+            // checks whether any of the fields are empty, if true, sends a notification and
+            // cancels
+            String error = "";
+
+            if (pomodoroField.getValue() < 1) {
+                error = "Must do at least 1 pomodoro";
+            }
+
+            if (!error.equals("")) {
+                Notification errorNotif = Notification.show(error);
+                errorNotif.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                errorNotif.setDuration(2000);
+                return;
+            }
+
+            daySchedule.generatePomodoro((int) Math.round(pomodoroField.getValue()),taskManager);
+            Notification selectTaskNotif = Notification.show("Generated Pomodoros!");
+            selectTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            selectTaskNotif.setDuration(2000);
+            updateGrid();
+            dialog.close();
+            
+
+        });
+        return new VerticalLayout(title,pomodoroField,new HorizontalLayout(cancelButton,saveButton));
     }
     private VerticalLayout addEventLayout(Dialog dialog, Event event) {
 

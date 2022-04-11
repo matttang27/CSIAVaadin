@@ -1,6 +1,7 @@
 package application.views.code;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -96,6 +97,8 @@ public class TaskGrid{
                             Notification doneNotif = Notification.show("Completed Task!");
                             doneNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                             doneNotif.setDuration(2000);
+                            DayStat todayStat = statManager.getDay(LocalDate.now());
+                            todayStat.setTasksCompleted(todayStat.getTasksCompleted() + 1);
 
                         }
                         updateGrid();
@@ -432,6 +435,9 @@ public class TaskGrid{
 
             updateGrid();
             updateCalendar();
+
+            DayStat todayStat = statManager.getDay(LocalDate.now());
+            todayStat.setTasksCreated(todayStat.getTasksCreated() + 1);
 
             Notification addTaskNotif = Notification.show("Added your Task!");
             addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);

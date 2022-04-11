@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class Event implements Serializable,Cloneable {
+    private static final long serialVersionUID = 1L;
     private String name;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -24,6 +25,11 @@ public class Event implements Serializable,Cloneable {
         this.endTime = endTime;
         this.timeSpent = timeSpent;
         this.task = task;
+    }
+    public Event(String name, LocalTime startTime, LocalTime endTime) {
+        this.name = name;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
     public Event() {
 

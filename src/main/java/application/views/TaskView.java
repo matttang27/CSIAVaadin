@@ -1,4 +1,5 @@
 package application.views;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -50,6 +51,7 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.textfield.*;
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.ComponentUtil;
@@ -72,7 +74,21 @@ public class TaskView extends VerticalLayout {
     private String viewMode = "grid";
     private TaskGrid taskGrid;
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    @ClientCallable
+    public void windowClosed() {
+        try {
+			manager.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+
     public TaskView() {
+        UI.getCurrent().getPage().executeJs("function closeListener() { $0.$server.windowClosed(); } " +
+        "window.addEventListener('beforeunload', closeListener); " +
+        "window.addEventListener('unload', closeListener);",getElement());
+
+
         
 
         
@@ -93,6 +109,7 @@ public class TaskView extends VerticalLayout {
             setup();
         }
     }
+    
     public void setup() {
         user = manager.getUser();
         taskManager = manager.getTasker();

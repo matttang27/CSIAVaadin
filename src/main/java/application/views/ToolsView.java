@@ -11,6 +11,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import application.views.code.*;
+
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
@@ -51,6 +53,14 @@ public class ToolsView extends VerticalLayout {
     private GroupManager groupManager;
     private StatManager statManager;
     private User user;
+    @ClientCallable
+    public void windowClosed() {
+        try {
+			manager.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
     public ToolsView() {
 
         //import data
