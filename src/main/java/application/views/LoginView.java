@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -91,9 +92,10 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
 
     }
     public void setup() {
-        FileInputStream serviceAccount;
+        InputStream serviceAccount;
         try {
-            serviceAccount = new FileInputStream("src/main/java/application/key.json");
+            
+            serviceAccount = this.getClass().getClassLoader().getResourceAsStream("key.json");
             FirebaseOptions options = new FirebaseOptions.Builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount))
             .build();
@@ -209,7 +211,7 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
 
                     Manager manager = new Manager();
                     manager.setUid(uId);
-                    manager.save();
+                    if (manager != null) {manager.save();};
                     Notification notif = Notification.show("Account has been created!");
                     notif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 } catch (FirebaseAuthException e1) {

@@ -49,7 +49,7 @@ public class StatsView extends VerticalLayout {
     @ClientCallable
     public void windowClosed() {
         try {
-			manager.save();
+			if (manager != null) {manager.save();};
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

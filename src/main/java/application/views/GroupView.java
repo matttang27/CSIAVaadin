@@ -69,7 +69,7 @@ public class GroupView extends VerticalLayout {
     @ClientCallable
     public void windowClosed() {
         try {
-			manager.save();
+			if (manager != null) {manager.save();};
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -184,7 +184,10 @@ public class GroupView extends VerticalLayout {
         Div titlePart = new Div();
         titlePart.getStyle().set("display", "inline-block");
         if (group.getIcon() != "") {
-            titlePart.add(icons.get(group.getIcon()));
+            if (icons.get(group.getIcon()) != null) {
+                titlePart.add(icons.get(group.getIcon()));
+            }
+            
         }
         titlePart.add(title);
         boardPiece.add(titlePart, pending);

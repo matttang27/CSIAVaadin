@@ -23,7 +23,7 @@ public class NavTab extends Tabs {
             
             getUI().ifPresent(ui -> {
                 try {
-                    manager.save();
+                    if (manager != null) {manager.save();};
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
