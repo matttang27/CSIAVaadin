@@ -2,9 +2,6 @@ package application.views.code;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-
-import com.vaadin.flow.component.icon.Icon;
 
 public class Group implements Serializable {
     private static final long serialVersionUID = 1L;

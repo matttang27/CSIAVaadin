@@ -1,13 +1,11 @@
 package application.views.code;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import application.views.GroupView;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -35,7 +33,10 @@ import com.vaadin.flow.component.textfield.TextField;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 
+import application.views.GroupView;
+
 //class for making it easier to create Task Grids
+//I'm too big brain
 public class TaskGrid{
     public Grid<Task> grid;
     private FullCalendar calendar;
