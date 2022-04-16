@@ -35,7 +35,7 @@ import com.vaadin.flow.theme.Theme;
 
 import application.views.code.FireBaseAuth;
 import application.views.code.Manager;
-@Theme(themeFolder = "flowcrmtutorial")
+@Theme(themeFolder = "taskerio")
 @PageTitle("login")
 @Route(value = "login")
 

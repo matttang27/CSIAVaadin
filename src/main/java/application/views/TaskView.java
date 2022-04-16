@@ -32,7 +32,7 @@ import application.views.code.TaskManager;
 import application.views.code.User;
 
 @PWA(name = "Flow CRM Tutorial", shortName = "Flow CRM Tutorial", enableInstallPrompt = false)
-@Theme(themeFolder = "flowcrmtutorial")
+@Theme(themeFolder = "taskerio")
 @PageTitle("tasks")
 @Route(value = "tasks")
 

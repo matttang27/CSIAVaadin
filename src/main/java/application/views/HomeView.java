@@ -7,7 +7,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
-@Theme(themeFolder = "flowcrmtutorial")
+@Theme(themeFolder = "taskerio")
 @PageTitle("Home")
 @Route(value = "")
 

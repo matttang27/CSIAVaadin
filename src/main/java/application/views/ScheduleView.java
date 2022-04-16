@@ -40,7 +40,7 @@ import application.views.code.Task;
 import application.views.code.TaskGrid;
 import application.views.code.TaskManager;
 import application.views.code.User;
-@Theme(themeFolder = "flowcrmtutorial")
+@Theme(themeFolder = "taskerio")
 @PageTitle("Schedule")
 @Route(value = "schedule")
 

@@ -23,7 +23,7 @@ import application.views.code.NavTab;
 import application.views.code.StatManager;
 import application.views.code.TaskManager;
 import application.views.code.User;
-@Theme(themeFolder = "flowcrmtutorial")
+@Theme(themeFolder = "taskerio")
 @PageTitle("Statistics")
 @Route(value = "statistics")
 

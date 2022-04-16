@@ -52,7 +52,7 @@ import com.vaadin.flow.component.textfield.*;
 import java.awt.Color;
 import java.io.IOException;
 
-@Theme(themeFolder = "flowcrmtutorial")
+@Theme(themeFolder = "taskerio")
 @PageTitle("Groups")
 @Route(value = "groups")
 public class GroupView extends VerticalLayout {

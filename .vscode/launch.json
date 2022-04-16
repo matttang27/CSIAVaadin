@@ -15,14 +15,14 @@
             "name": "Launch Application",
             "request": "launch",
             "mainClass": "application.Application",
-            "projectName": "flowcrmtutorial"
+            "projectName": "taskerio"
         },
         {
             "type": "java",
             "name": "Launch Main",
             "request": "launch",
             "mainClass": "application.views.code.Main",
-            "projectName": "flowcrmtutorial"
+            "projectName": "taskerio"
         }
     ]
 }

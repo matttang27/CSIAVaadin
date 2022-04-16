@@ -295,7 +295,7 @@
                         <configuration>
                             <appName>matttang27-vaadin-heroku</appName>
                             <processTypes>
-                                <web>java $JAVA_OPTS -jar target/flowcrmtutorial-1.0-SNAPSHOT.jar --server.port=$PORT</web>
+                                <web>java $JAVA_OPTS -jar target/taskerio-2.0.jar --server.port=$PORT</web>
                             </processTypes>
                         </configuration>
                     </plugin>
