@@ -36,6 +36,7 @@ import org.vaadin.stefan.fullcalendar.FullCalendar;
 import application.views.GroupView;
 
 //class for making it easier to create Task Grids
+//I'm too big brain
 public class TaskGrid{
     public Grid<Task> grid;
     private FullCalendar calendar;

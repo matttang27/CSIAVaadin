@@ -3,7 +3,6 @@ package application.views.code;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class StatManager implements Serializable {
 private static final long serialVersionUID = 1L;

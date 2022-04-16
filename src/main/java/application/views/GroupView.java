@@ -67,7 +67,7 @@ public class GroupView extends VerticalLayout {
     @ClientCallable
     public void windowClosed() {
         try {
-			manager.save();
+			if (manager != null) {manager.save();};
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -108,6 +108,7 @@ public class GroupView extends VerticalLayout {
         addDialog.add(addGroupLayout(addDialog));
     }
 
+    //adds the board pieces to the board
     public void PopulateBoard() {
         UI.getCurrent().getPage().retrieveExtendedClientDetails(receiver -> {
             // int screenWidth = receiver.getScreenWidth();
@@ -136,6 +137,7 @@ public class GroupView extends VerticalLayout {
 
     }
 
+    //because group icons must be saved as Strings (the Icon object is not serializable), we gotta load them like this
     static public HashMap<String, Icon> loadIcons() {
         icons = new HashMap<String, Icon>();
         for (int i = 0; i < vIcons.size(); i++) {
@@ -147,6 +149,7 @@ public class GroupView extends VerticalLayout {
         return icons;
     }
 
+    //Converts a group to a board piece (VerticalLayout)
     public VerticalLayout groupToBoard(Group group) {
         if (group == null) {
             return new VerticalLayout();
@@ -183,7 +186,10 @@ public class GroupView extends VerticalLayout {
         Div titlePart = new Div();
         titlePart.getStyle().set("display", "inline-block");
         if (group.getIcon() != "") {
-            titlePart.add(icons.get(group.getIcon()));
+            if (icons.get(group.getIcon()) != null) {
+                titlePart.add(icons.get(group.getIcon()));
+            }
+            
         }
         titlePart.add(title);
         boardPiece.add(titlePart, pending);
@@ -205,6 +211,7 @@ public class GroupView extends VerticalLayout {
         return finalLayout;
     }
 
+    //The dialog that opens when you press the add Group button
     public VerticalLayout addGroupLayout(Dialog dialog) {
         // TODO: Improve Color Picker
         ColorPicker colorPicker = new ColorPicker();

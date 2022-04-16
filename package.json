@@ -2,6 +2,8 @@
   "name": "no-name",
   "license": "UNLICENSED",
   "dependencies": {
+    "@appreciated/color-picker": "2.0.0-beta.4",
+    "@appreciated/color-picker-field": "2.0.0-beta.5",
     "@fullcalendar/core": "5.10.1",
     "@fullcalendar/daygrid": "5.10.1",
     "@fullcalendar/interaction": "5.10.1",
@@ -79,7 +81,7 @@
     "lit-element": "2.5.1",
     "lit-html": "1.4.1",
     "lumo-css-framework": "^4.0.10",
-    "moment": "2.29.1",
+    "moment": "2.29.2",
     "moment-timezone": "0.5.32"
   },
   "devDependencies": {
@@ -104,6 +106,8 @@
   },
   "vaadin": {
     "dependencies": {
+      "@appreciated/color-picker": "2.0.0-beta.4",
+      "@appreciated/color-picker-field": "2.0.0-beta.5",
       "@fullcalendar/core": "5.10.1",
       "@fullcalendar/daygrid": "5.10.1",
       "@fullcalendar/interaction": "5.10.1",
@@ -204,6 +208,6 @@
       "webpack-dev-server": "3.11.0",
       "webpack-merge": "4.2.2"
     },
-    "hash": "45134f677271c17ff7941a2a387f3ff05c003dd10bac180e9ae09f4e92f0ebe2"
+    "hash": "4f2656ba40d3fb0cac28afeecaf989aedf9b41d127e0140b9f5a37c6d5c7c962"
   }
 }

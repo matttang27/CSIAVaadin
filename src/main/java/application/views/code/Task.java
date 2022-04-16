@@ -1,16 +1,10 @@
 package application.views.code;
+import java.awt.Color;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.awt.Color;
-import java.io.Serializable;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import org.vaadin.stefan.fullcalendar.Entry;
-import org.vaadin.stefan.fullcalendar.FullCalendar;
-import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 public class Task implements Serializable {
 private static final long serialVersionUID = 1L;
     

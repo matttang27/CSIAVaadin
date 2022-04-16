@@ -84,25 +84,6 @@ private static final long serialVersionUID = 1L;
         }
     }
 
-    
-
-    /*
-     * 
-     * 
-     * static ArrayList<Task> filterByGroup(ArrayList<Task> tasks, ArrayList<String>
-     * groups) {
-     * if (groups.equals("")) {return tasks;};
-     * ArrayList<Task> filtered = new ArrayList<Task>();
-     * tasks.forEach((task) -> {
-     * if (groups.contains(task.group)) {
-     * filtered.add(task);
-     * }
-     * });
-     * return filtered;
-     * 
-     * }
-     */
-
     public Task highestPriority() {
         Task highTask = tasks.get(0);
         double highScore = 0;
@@ -136,6 +117,7 @@ private static final long serialVersionUID = 1L;
         double b = settings.getScoreB();
         double c = settings.getScoreC();
 
+        //bubble sort time bb
         for (int i=0;i<tasks.size()-1;i++) {
             flag = false;
 
@@ -191,31 +173,6 @@ private static final long serialVersionUID = 1L;
         return "{" +
                 " tasks='" + getTasks() + "'" +
                 "}";
-    }
-
-    static public String printTasks(ArrayList<Task> tasks) {
-        if (tasks.size() == 0) {
-            return "No tasks!";
-        }
-        String output = "";
-        for (int i = 0; i < tasks.size(); i++) {
-            Task t = tasks.get(i);
-            output += String.format("%s - Due: %s - Done: %s - Priority: %d\n", t.getName(), t.getNextDue(), t.getDone(), t.getPriority());
-        }
-        return output;
-    }
-
-    public String printTasks() {
-        ArrayList<Task> tasks = this.tasks;
-        if (tasks.size() == 0) {
-            return "No tasks!";
-        }
-        String output = "";
-        for (int i = 0; i < tasks.size(); i++) {
-            Task t = tasks.get(i);
-            output += String.format("%s - Due: %s - Done: %s - Priority: %d\n", t.getName(), t.getNextDue(), t.getDone(), t.getPriority());
-        }
-        return output;
     }
 
     //creates a deep copy (i think that's the term?) of the tasks

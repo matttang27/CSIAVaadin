@@ -3,10 +3,11 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+//never implemented User because my client didn't need it, but since it was already in some of the code I just kept it lol
+//will perhaps implement in the future
 public class User implements Serializable {
 private static final long serialVersionUID = 1L;
     String name;
-    //Image icon - will be implemented in actual app
     LocalDate birthday;
     LocalDateTime created;
     int streak;
