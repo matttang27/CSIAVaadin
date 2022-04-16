@@ -1,16 +1,19 @@
 package application.views.code;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Scanner;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class TaskManager implements Serializable {
 private static final long serialVersionUID = 1L;
     
     ArrayList<Task> tasks;
     Manager manager;
-    //for id setting purposes
-    int taskCount = 0;
 
     TaskManager(Manager manager) {
         tasks = new ArrayList<Task>();
@@ -34,15 +37,13 @@ private static final long serialVersionUID = 1L;
     }
 
     public void addTask(Task task) {
-        task.setId(taskCount);
-        taskCount += 1;
+        task.setId(tasks.size());
         tasks.add(task);
     }
 
     public Task blankTask() {
         Task t = new Task();
-        t.setId(taskCount);
-        taskCount += 1;
+        t.setId(tasks.size());
         tasks.add(t);
         return t;
     }
