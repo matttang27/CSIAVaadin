@@ -52,6 +52,7 @@ public class ToolsView extends VerticalLayout {
     private TaskManager taskManager;
     private GroupManager groupManager;
     private StatManager statManager;
+    private SettingsManager settings;
     private User user;
     @ClientCallable
     public void windowClosed() {
@@ -80,6 +81,7 @@ public class ToolsView extends VerticalLayout {
         taskManager = manager.getTasker();
         groupManager = manager.getGrouper();
         statManager = manager.getStater();
+        settings = manager.getSettings();
 
         NavTab tabs = new NavTab(manager,"Tools");
         add(new VerticalLayout(tabs));
