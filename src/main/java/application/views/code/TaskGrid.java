@@ -1,12 +1,11 @@
 package application.views.code;
 
-import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import application.views.GroupView;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -34,7 +33,10 @@ import com.vaadin.flow.component.textfield.TextField;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 
+import application.views.GroupView;
+
 //class for making it easier to create Task Grids
+//I'm too big brain
 public class TaskGrid{
     public Grid<Task> grid;
     private FullCalendar calendar;
@@ -48,6 +50,7 @@ public class TaskGrid{
     private String viewMode = "grid";
     private boolean ascending = true;
     private boolean showDoneB = false;
+    private String groupFilter = "";
     private HashMap<String, Icon> icons = GroupView.loadIcons();
     private HashMap<String, Object[]> filter = new HashMap<String, Object[]>() {
         {
@@ -96,6 +99,8 @@ public class TaskGrid{
                             Notification doneNotif = Notification.show("Completed Task!");
                             doneNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                             doneNotif.setDuration(2000);
+                            DayStat todayStat = statManager.getDay(LocalDate.now());
+                            todayStat.setTasksCompleted(todayStat.getTasksCompleted() + 1);
 
                         }
                         updateGrid();
@@ -179,7 +184,12 @@ public class TaskGrid{
         ArrayList<Task> tasks = taskManager.getTasks();
 
         tasks = taskManager.taskSortFilter(sortType, ascending, new Boolean[] { showDoneB }, filter, tasks);
+        if (!groupFilter.equals("")) {
+            tasks = taskManager.keepGroup(tasks,groupFilter);
+        }
         grid.setItems(tasks);
+
+        
     }
 
     public void addContextMenu() {
@@ -433,6 +443,9 @@ public class TaskGrid{
             updateGrid();
             updateCalendar();
 
+            DayStat todayStat = statManager.getDay(LocalDate.now());
+            todayStat.setTasksCreated(todayStat.getTasksCreated() + 1);
+
             Notification addTaskNotif = Notification.show("Added your Task!");
             addTaskNotif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             addTaskNotif.setDuration(2000);
@@ -479,6 +492,20 @@ public class TaskGrid{
     public void setUser(User user) {
         this.user = user;
     }
+
+    public String getGroupFilter() {
+        return this.groupFilter;
+    }
+    public void setGroupFilter(String groupFilter) {
+        this.groupFilter = groupFilter;
+    }
+    public HashMap<String,Icon> getIcons() {
+        return this.icons;
+    }
+    public void setIcons(HashMap<String,Icon> icons) {
+        this.icons = icons;
+    }
+
 
     public TaskManager getTaskManager() {
         return this.taskManager;

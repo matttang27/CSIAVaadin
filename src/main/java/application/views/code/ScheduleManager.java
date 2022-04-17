@@ -45,6 +45,7 @@ private static final long serialVersionUID = 1L;
     public void resetDay(LocalDate day) {
         if (!dayExists(day)) {return;}
         DaySchedule daySchedule = this.getDay(day);
+        daySchedule.setEvents(new ArrayList<Event>());
         for (Event e: days.get(DEFAULT).getEvents()) {
             daySchedule.addEvent(e.copy());
         }

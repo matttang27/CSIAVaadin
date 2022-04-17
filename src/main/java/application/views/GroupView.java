@@ -1,56 +1,56 @@
 package application.views;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Optional;
 
-import application.views.code.*;
-
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.*;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.login.LoginForm;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.notification.Notification.Position;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.component.tabs.TabsVariant;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.PreserveOnRefresh;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.PWA;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
-import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.textfield.*;
-import java.awt.Color;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.Theme;
 
-@Theme(themeFolder = "flowcrmtutorial")
+import application.views.code.ColorPicker;
+import application.views.code.Divider;
+import application.views.code.Group;
+import application.views.code.GroupManager;
+import application.views.code.Manager;
+import application.views.code.NavTab;
+import application.views.code.Task;
+import application.views.code.TaskGrid;
+import application.views.code.TaskManager;
+import application.views.code.User;
+
+@Theme(themeFolder = "taskerio")
 @PageTitle("Groups")
 @Route(value = "groups")
 public class GroupView extends VerticalLayout {
@@ -64,7 +64,14 @@ public class GroupView extends VerticalLayout {
     public static HashMap<String, Icon> icons = loadIcons();
 
     private static DateTimeFormatter defDTFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
+    @ClientCallable
+    public void windowClosed() {
+        try {
+			if (manager != null) {manager.save();};
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
     public GroupView() {
         
         // import data
@@ -101,6 +108,7 @@ public class GroupView extends VerticalLayout {
         addDialog.add(addGroupLayout(addDialog));
     }
 
+    //adds the board pieces to the board
     public void PopulateBoard() {
         UI.getCurrent().getPage().retrieveExtendedClientDetails(receiver -> {
             // int screenWidth = receiver.getScreenWidth();
@@ -129,6 +137,7 @@ public class GroupView extends VerticalLayout {
 
     }
 
+    //because group icons must be saved as Strings (the Icon object is not serializable), we gotta load them like this
     static public HashMap<String, Icon> loadIcons() {
         icons = new HashMap<String, Icon>();
         for (int i = 0; i < vIcons.size(); i++) {
@@ -140,6 +149,7 @@ public class GroupView extends VerticalLayout {
         return icons;
     }
 
+    //Converts a group to a board piece (VerticalLayout)
     public VerticalLayout groupToBoard(Group group) {
         if (group == null) {
             return new VerticalLayout();
@@ -161,13 +171,12 @@ public class GroupView extends VerticalLayout {
                 pending.getElement().getThemeList().add("badge success");
                 break;
             case 1:
-                pending = new Span(createIcon(VaadinIcon.EXCLAMATION_CIRCLE_O), new Span("Overdue"));
-                pending.getElement().getThemeList().add("badge error");
+                pending = new Span(createIcon(VaadinIcon.COG), new Span("To-Do"));
+                pending.getElement().getThemeList().add("badge contrast");
                 break;
             case 2:
-                Span span = new Span(createIcon(VaadinIcon.COG), new Span("To-Do"));
-                span.getElement().getThemeList().add("badge contrast");
-                break;
+                pending = new Span(createIcon(VaadinIcon.EXCLAMATION_CIRCLE_O), new Span("Overdue"));
+                pending.getElement().getThemeList().add("badge error");
         }
 
         pending.getElement().getThemeList().add("badge");
@@ -175,7 +184,10 @@ public class GroupView extends VerticalLayout {
         Div titlePart = new Div();
         titlePart.getStyle().set("display", "inline-block");
         if (group.getIcon() != "") {
-            titlePart.add(icons.get(group.getIcon()));
+            if (icons.get(group.getIcon()) != null) {
+                titlePart.add(icons.get(group.getIcon()));
+            }
+            
         }
         titlePart.add(title);
         boardPiece.add(titlePart, pending);
@@ -197,6 +209,7 @@ public class GroupView extends VerticalLayout {
         return finalLayout;
     }
 
+    //The dialog that opens when you press the add Group button
     public VerticalLayout addGroupLayout(Dialog dialog) {
         // TODO: Improve Color Picker
         ColorPicker colorPicker = new ColorPicker();
@@ -330,7 +343,9 @@ public class GroupView extends VerticalLayout {
 
         Grid<Task> groupTasks = new Grid<>(Task.class, false);
         TaskGrid taskGrid = new TaskGrid(groupTasks, manager, null);
+        taskGrid.setGroupFilter(group.getName());
         taskGrid.addContextMenu();
+        taskGrid.updateGrid();
         groupTasks.setItems(manager.getTasker().keepGroup(taskManager.getTasks(), group.getName()));
 
         VerticalLayout fieldLayout = new VerticalLayout(new HorizontalLayout(nameField, selectIcon), colorPicker,
@@ -339,7 +354,11 @@ public class GroupView extends VerticalLayout {
         Divider divider = new Divider();
         divider.getStyle().set("background-color", group.getColor());
         HorizontalLayout finalLayout = new HorizontalLayout(title, divider, fieldLayout);
-        Button cancelButton = new Button("Cancel", e -> dialog.close());
+        Button cancelButton = new Button("Cancel", e -> {
+            //we need to repopulate board even for a cancel because the user may have deleted tasks, which affect the status.
+            PopulateBoard();
+            dialog.close();
+        });
         Button saveButton = new Button("Save", e -> {
             // checks whether any of the fields are empty, if true, sends a notification and
             // cancels

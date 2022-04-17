@@ -7,5 +7,9 @@
         "**/.svn": false,
         "**/CVS": false,
         "**/Thumbs.db": false
-    }
+    },
+    "search.exclude": {
+        "**/node_modules": false
+    },
+    "search.useIgnoreFiles": false
 }
