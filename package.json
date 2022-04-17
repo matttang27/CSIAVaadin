@@ -2,6 +2,8 @@
   "name": "no-name",
   "license": "UNLICENSED",
   "dependencies": {
+    "@appreciated/color-picker": "2.0.0-beta.4",
+    "@appreciated/color-picker-field": "2.0.0-beta.5",
     "@fullcalendar/core": "5.10.1",
     "@fullcalendar/daygrid": "5.10.1",
     "@fullcalendar/interaction": "5.10.1",
@@ -104,6 +106,8 @@
   },
   "vaadin": {
     "dependencies": {
+      "@appreciated/color-picker": "2.0.0-beta.4",
+      "@appreciated/color-picker-field": "2.0.0-beta.5",
       "@fullcalendar/core": "5.10.1",
       "@fullcalendar/daygrid": "5.10.1",
       "@fullcalendar/interaction": "5.10.1",
@@ -204,6 +208,6 @@
       "webpack-dev-server": "3.11.0",
       "webpack-merge": "4.2.2"
     },
-    "hash": "4a982631a0ada28b94f2afff6109d2256d454364f56f3039e687e9a15d69bea4"
+    "hash": "4f2656ba40d3fb0cac28afeecaf989aedf9b41d127e0140b9f5a37c6d5c7c962"
   }
 }

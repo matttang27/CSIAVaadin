@@ -79,6 +79,9 @@ private static final long serialVersionUID = 1L;
         for (int i=0;i<events.size();i++) {
             if (events.get(i).getStartTime().isBefore(startTime) && events.get(i).getEndTime().isAfter(startTime) || events.get(i).getStartTime().isBefore(endTime) && events.get(i).getEndTime().isAfter(endTime)) {
                 return events.get(i);
+            }
+            else if (events.get(i).getStartTime().equals(startTime) && events.get(i).getEndTime().equals(endTime)) {
+                return events.get(i);
             };
         }
         return null;
@@ -119,14 +122,12 @@ private static final long serialVersionUID = 1L;
             
         }
         //find the potential pomodoros for each "gap"
-        int totalPotential = 0;
         for (int i=0;i<gapStarts.size();i++) {
             int a = (int) Duration.between(gapStarts.get(i),gapEnds.get(i)).toMillis() / 60000;
             int potential = a / 30;
             //for every 4 pomodoros we need a break
             potential = potential / 5 * 4 + potential % 5;
             gapPotential.add(potential);
-            totalPotential += potential;
         }
         //get list of tasks, sorted by task score
         ArrayList<Task> copy = taskManager.sort(taskManager.getTasks(),"taskScore",false);

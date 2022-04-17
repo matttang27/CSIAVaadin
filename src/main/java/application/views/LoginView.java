@@ -45,6 +45,7 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
     @Override
     public void setParameter(BeforeEvent event,
             @OptionalParameter String parameter) {
+        
         if (parameter == null || !parameter.equals("signup")) {
             this.login = true;
             setup();
@@ -96,6 +97,15 @@ public class LoginView extends VerticalLayout implements HasUrlParameter<String>
         loginForm.setI18n(i18n);
         
         loginForm.setForgotPasswordButtonVisible(false);
+
+        if (!login) {
+            i18nForm.setTitle("Sign up");
+            i18nForm.setSubmit("Sign up");
+            i18n.setForm(i18nForm);
+            loginForm.setI18n(i18n);
+            login = false;
+        }
+
         add(loginForm);
         loginForm.addLoginListener(listener -> {
             loginForm.setEnabled(true);
